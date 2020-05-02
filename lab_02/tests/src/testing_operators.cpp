@@ -25,3 +25,15 @@ TEST(ListOperatorsSuite, PlusOperators) {
   ASSERT_NO_THROW(l2 += l3);
   ASSERT_EQ(l2, ld2);
 }
+
+TEST(ListOperatorsSuite, AccessibilityBracketOperator) {
+  List<int> l1{1, 2, 3};
+  ASSERT_NO_THROW(l1[1]);
+  ASSERT_EQ(l1[1], 2);
+
+  List<int> l2{1, 2, 3, 4};
+  ASSERT_THROW(l2[100], ListOutOfBounds);
+
+  List<int> l3;
+  ASSERT_THROW(l3[0], EmptyList);
+}
