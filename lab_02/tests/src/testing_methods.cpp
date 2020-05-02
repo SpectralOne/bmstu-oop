@@ -19,6 +19,24 @@ TEST(ListMethodsSuite, Size) {
   ASSERT_EQ(l.size(), sz);
 }
 
+TEST(ListMethodsSuite, UniqueNoThrow) {
+  List<int> l{1, 2, 1, 1};
+  ListData<int> ld{1, 2};
+  
+  ASSERT_NO_THROW(l.unique());
+  ASSERT_EQ(l, ld);
+}
+
+TEST(ListMethodsSuite, UniqueEmptyList) {
+  List<int> l;
+  ASSERT_THROW(l.unique(), EmptyList);
+}
+
+TEST(ListMethodsSuite, UniqueNotEnoughNodes) {
+  List<int> l{1};
+  ASSERT_THROW(l.unique(), NotEnoughNodes);
+}
+
 TEST(ListMethodsSuite, Clear) {
   List<int> l{1, 3};
   const ListData<int> ld{0, 0};
@@ -44,7 +62,6 @@ TEST(ListMethodsSuite, AscendingSort) {
   const ListData<int> ld{1, 2, 3, 4};
 
   ASSERT_NO_THROW(l.sort());
-  std::cout << l << std::endl;
   ASSERT_EQ(l, ld);
 }
 

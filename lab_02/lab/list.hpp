@@ -48,6 +48,7 @@ class List {
     void flush();
     bool isEmpty() const;
     size_t length() const;
+    void unique();
 
     ListIterator<T>& begin();
     ListIterator<T>& end();

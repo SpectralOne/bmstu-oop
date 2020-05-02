@@ -272,6 +272,30 @@ size_t List<T>::length() const {
 }
 
 template <typename T>
+void List<T>::unique() {
+    if (this->head == nullptr) {
+        throw EmptyList();
+    }
+
+    if (this->length() < 2) {
+        throw NotEnoughNodes();
+    }
+
+    this->sort();
+    Shared<ListNode<T>> current(this->head);
+    Shared<ListNode<T>> next_next(nullptr);
+    while (current->next) {
+        if (current->data == current->next->data) {
+            next_next = current->next->next;
+            del(current->next);
+            current->setNext(next_next);
+        } else {
+            current = current->next;
+        }
+    }
+}
+
+template <typename T>
 ListIterator<T>& List<T>::begin() {
     ListIterator<T> it(*this);
     it.first();

@@ -18,19 +18,19 @@ class ListException : public std::exception {
 class MemmoryError : public ListException {
  public:
     MemmoryError()
-        : ListException("Error occurred while reading from stream") {}
+        : ListException("Memmory error occured!") {}
 };
 
 class InvalidListStream : public ListException {
  public:
     InvalidListStream()
-        : ListException("Error occurred while reading from stream") {}
+        : ListException("Error occurred while reading from stream!") {}
 };
 
 class ListOutOfBounds : public ListException {
  public:
     ListOutOfBounds()
-        : ListException("List out of bound") {}
+        : ListException("List out of bounds!") {}
 };
 
 class EmptyList : public ListException {
@@ -48,11 +48,11 @@ class IteratorCompareError : public ListException {
 class NotEnoughNodes : public ListException {
  public:
     NotEnoughNodes()
-        : ListException("Not enough nodes for sort!") {}
+        : ListException("Not enough nodes!") {}
 };
 
 class ConstructorBadArguments : public ListException {
  public:
     ConstructorBadArguments()
-        : ListException("Not enough nodes for sort!") {}
+        : ListException("Bad arguments!") {}
 };
