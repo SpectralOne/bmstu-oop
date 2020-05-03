@@ -32,13 +32,16 @@ class List {
     virtual ~List();
 
     T operator[](const size_t pos);
+    T operator[](const size_t pos) const;
 
     List<T>& operator=(const List<T>& l) = default;
     List<T>& operator=(List<T>&& l);
 
     List<T>& operator+=(const List<T>& l);
     List<T>& operator+=(const T data);
+    List<T>& operator+=(const Shared<ListNode<T>> data);
 
+    List<T>& operator+(const Shared<ListNode<T>> data);
     List<T>& operator+(const List<T>& l);
     List<T>& operator+(const T data);
 
@@ -61,6 +64,7 @@ class List {
 
     List<T>& append(const List<T>& l);
     List<T>& append(const T data);
+    List<T>& append(Shared<ListNode<T>> node);    
 
     T popBackArg();
     void popBack();
@@ -70,9 +74,14 @@ class List {
 
     List<T>& insertFront(const List<T>& l);
     List<T>& insertFront(const T data);
+    List<T>& insertFront(Shared<ListNode<T>> node);
 
     List<T>& insertAfter(ListIterator<T>& it, const T data);
     List<T>& insertAfter(ListIterator<T>& it, const List<T>& after);
+
+    List<T>& insertAfter(Shared<ListNode<T>> node, Shared<ListNode<T>> after);
+    List<T>& insertAfter(Shared<ListNode<T>> node, const T data);
+    List<T>& insertAfter(Shared<ListNode<T>> node, List<T>& after);
 
     List<T>& insertBefore(ListIterator<T>& it, const T data);
     List<T>& insertBefore(ListIterator<T>& it, const List<T>& before);
@@ -80,36 +89,26 @@ class List {
     List<T>& insertBefore(ListIteratorConst<T>& it, const T data);
     List<T>& insertBefore(ListIteratorConst<T>& it, const List<T>& before);
 
+    List<T>& insertBefore(Shared<ListNode<T>> node, Shared<ListNode<T>> before);
+    List<T>& insertBefore(Shared<ListNode<T>> node, const T data);
+    List<T>& insertBefore(Shared<ListNode<T>> node, List<T>& before);
+
     void sort(bool ascending = true);
     void reverse();
     std::vector<T> to_vect() const;
     
     Shared<ListNode<T>> find(const T data) const;
+    Shared<ListNode<T>> find(const Shared<ListNode<T>> node) const;
+    
+    Shared<ListNode<T>> del(const Shared<ListNode<T>> node);
     Shared<ListNode<T>> del(ListIterator<T>& it);
+
     List<T>& reset(ListIterator<T>& it, const T data);
+    List<T>& reset(Shared<ListNode<T>> node, Shared<ListNode<T>> temp);
+    List<T>& reset(Shared<ListNode<T>> node, T data);
     
     friend class ListIterator<T>;
     friend class ListIteratorConst<T>;
-
- protected:
-    List<T>& operator+=(const Shared<ListNode<T>> data);
-    List<T>& operator+(const Shared<ListNode<T>> data);
-
-    Shared<ListNode<T>> find(const Shared<ListNode<T>> node) const;
-    Shared<ListNode<T>> del(const Shared<ListNode<T>> node);
-    List<T>& reset(Shared<ListNode<T>> node, Shared<ListNode<T>> temp);
-    List<T>& reset(Shared<ListNode<T>> node, T data);
-
-    List<T>& append(Shared<ListNode<T>> node);
-    List<T>& insertFront(Shared<ListNode<T>> node);
-
-    List<T>& insertAfter(Shared<ListNode<T>> node, Shared<ListNode<T>> after);
-    List<T>& insertAfter(Shared<ListNode<T>> node, const T data);
-    List<T>& insertAfter(Shared<ListNode<T>> node, List<T>& after);
-
-    List<T>& insertBefore(Shared<ListNode<T>> node, Shared<ListNode<T>> before);
-    List<T>& insertBefore(Shared<ListNode<T>> node, const T data);
-    List<T>& insertBefore(Shared<ListNode<T>> node, List<T>& before);
 
  private:
     Shared<ListNode<T>> head;

@@ -187,6 +187,22 @@ T List<T>::operator[](const size_t pos) {
 }
 
 template <typename T>
+T List<T>::operator[](const size_t pos) const {
+    if (this->head == nullptr) {
+        throw EmptyList();
+    }
+
+    if (pos >= this->length()) {
+        throw ListOutOfBounds();
+    }
+
+    ListIterator<T> it(*this);
+    it += pos;
+
+    return it.current();
+}
+
+template <typename T>
 List<T>& List<T>::operator=(List<T>&& l) {
     this->head = l.head;
     this->tail = l.tail;

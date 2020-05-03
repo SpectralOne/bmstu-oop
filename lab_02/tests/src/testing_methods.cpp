@@ -97,11 +97,21 @@ TEST(ListMethodsSuite, ListReverse) {
   ASSERT_EQ(l, ld);
 }
 
-TEST(ListMethodsSuite, AppendNode) {
+TEST(ListMethodsSuite, Append) {
   List<int> l;
   const ListData<int> ld{3};
 
   ASSERT_NO_THROW(l.append(3));
+  ASSERT_EQ(l, ld);
+}
+
+TEST(ListMethodsSuite, AppendNode) {
+  List<int> l;
+  const ListData<int> ld{3};
+
+  Shared<ListNode<int>> node = std::make_shared<ListNode<int>>(3);
+
+  ASSERT_NO_THROW(l.append(node));
   ASSERT_EQ(l, ld);
 }
 
