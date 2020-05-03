@@ -8,9 +8,6 @@
 
 template <typename T>
 class ListIterator : public BaseIterator<ListNode<T>> {
- private:
-    const List<T> *currentList;
-    Shared<ListNode<T>> currentNode;
  public:
     ListIterator(const List<T>& l);
     ListIterator(const ListIterator<T>& it);
@@ -38,13 +35,14 @@ class ListIterator : public BaseIterator<ListNode<T>> {
     bool operator>(const ListIterator<T>& it) const;
     bool operator<=(const ListIterator<T>& it) const;
     bool operator>=(const ListIterator<T>& it) const;
+
+ private:
+    const List<T> *currentList;
+    Shared<ListNode<T>> currentNode;
 };
 
 template <class T>
 class ListIteratorConst : public BaseIterator<ListNode<T>> {
-   private:
-    const List<T>* currentList;
-    Shared<ListNode<T>> currentNode;
  public:
     ListIteratorConst(const List<T>& l);
     ListIteratorConst(const ListIteratorConst<T>& it);
@@ -67,6 +65,10 @@ class ListIteratorConst : public BaseIterator<ListNode<T>> {
     bool operator>=(const ListIteratorConst<T>& it) const;
 
     int difference(const ListIteratorConst<T>& it);
+
+ private:
+    const List<T>* currentList;
+    Shared<ListNode<T>> currentNode;
 };
 
 #endif  // LIST_ITERATOR_H

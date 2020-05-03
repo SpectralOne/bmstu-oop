@@ -13,10 +13,6 @@ class ListIterator;
 
 template <typename T>
 class ListNode {
- private:
-    Shared<ListNode<T>> next;
-    T data;
-
  public:
     ListNode();
     ListNode(T data);
@@ -33,6 +29,10 @@ class ListNode {
 
     friend class List<T>;
     friend class ListIterator<T>;
+
+ private:
+    Shared<ListNode<T>> next;
+    T data;
 };
 
 #endif  // LIST_NODE_H
