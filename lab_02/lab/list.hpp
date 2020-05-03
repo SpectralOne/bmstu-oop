@@ -31,7 +31,7 @@ class List {
 
     virtual ~List();
 
-    T operator[](const size_t pos);
+    T& operator[](const size_t pos);
     T operator[](const size_t pos) const;
 
     List<T>& operator=(const List<T>& l) = default;

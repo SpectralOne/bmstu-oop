@@ -34,13 +34,21 @@ TEST(ListOperatorsSuite, PlusOperators) {
 }
 
 TEST(ListOperatorsSuite, AccessibilityBracketOperator) {
-  List<int> l1{1, 2, 3};
+  const List<int> l1{1, 2, 3};
   ASSERT_NO_THROW(l1[1]);
   ASSERT_EQ(l1[1], 2);
 
-  List<int> l2{1, 2, 3, 4};
+  const List<int> l2{1, 2, 3, 4};
   ASSERT_THROW(l2[100], ListOutOfBounds);
 
-  List<int> l3;
+  const List<int> l3;
   ASSERT_THROW(l3[0], EmptyList);
+}
+
+TEST(ListOperatorsSuite, AssignBracketOperator) {
+  List<int> l1{1, 2, 3};
+  const ListData<int> ld{1, 1, 3};
+
+  ASSERT_NO_THROW(l1[1] = 1);
+  ASSERT_EQ(l1, ld);
 }

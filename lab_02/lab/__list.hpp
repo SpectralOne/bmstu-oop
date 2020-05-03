@@ -171,7 +171,7 @@ List<T>::~List() {
 }
 
 template <typename T>
-T List<T>::operator[](const size_t pos) {
+T& List<T>::operator[](const size_t pos) {
     if (this->head == nullptr) {
         throw EmptyList();
     }
@@ -180,10 +180,12 @@ T List<T>::operator[](const size_t pos) {
         throw ListOutOfBounds();
     }
 
-    ListIterator<T> it(*this);
-    it += pos;
+    Shared<ListNode<T>> cur(this->head);
+    for (size_t i = 0; i < pos; ++i) {
+        cur = cur->next;
+    }
 
-    return it.current();
+    return cur->data;
 }
 
 template <typename T>
@@ -196,10 +198,12 @@ T List<T>::operator[](const size_t pos) const {
         throw ListOutOfBounds();
     }
 
-    ListIterator<T> it(*this);
-    it += pos;
+    Shared<ListNode<T>> cur(this->head);
+    for (size_t i = 0; i < pos; ++i) {
+        cur = cur->next;
+    }
 
-    return it.current();
+    return cur->data;
 }
 
 template <typename T>
