@@ -16,7 +16,7 @@ List<T>::List(const List<T>& l) {
         this->tail = nullptr;
     } else {
         Shared<ListNode<T>> cur(nullptr);
-        Shared<ListNode<T>> head(new ListNode<T>);
+        Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
         if (head == nullptr) {
             throw MemmoryError();
         }
@@ -28,7 +28,7 @@ List<T>::List(const List<T>& l) {
         cur = l.head->next;
 
         for (; cur; cur = cur->next) {
-            Shared<ListNode<T>> node(new ListNode<T>);
+            Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
             if (node == nullptr) {
                 throw MemmoryError();
             }
@@ -56,7 +56,7 @@ List<T>::List(T data, size_t n) {
     if (n == 0) {
         this->head = nullptr;
     } else {
-        Shared<ListNode<T>> head(new ListNode<T>);
+        Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
         if (head == nullptr) {
             throw MemmoryError();
         }
@@ -66,7 +66,7 @@ List<T>::List(T data, size_t n) {
 
         Shared<ListNode<T>> cur = head;
         for (size_t i = 0; i < n - 1; ++i) {
-            Shared<ListNode<T>> node(new ListNode<T>);
+            Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
             if (node == nullptr) {
                 throw MemmoryError();
             }
@@ -86,7 +86,7 @@ List<T>::List(ListIterator<T>& first, ListIterator<T>& last) {
     }
 
     ListIterator<T> f(first);
-    Shared<ListNode<T>> head(new ListNode<T>);
+    Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
     if (head == nullptr) {
         throw MemmoryError();
     }
@@ -97,7 +97,7 @@ List<T>::List(ListIterator<T>& first, ListIterator<T>& last) {
     Shared<ListNode<T>> cur(head);
 
     for (; f != last; ++f) {
-        Shared<ListNode<T>> node(new ListNode<T>);
+        Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
         if (node == nullptr) {
             throw MemmoryError();
         }
@@ -352,7 +352,7 @@ List<T>& List<T>::append(const List<T>& l) {
 
     Shared<ListNode<T>> tmp(l.head);
     for (; tmp; tmp = tmp->next) {
-        Shared<ListNode<T>> node(new ListNode<T>);
+        Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
         if (node == nullptr) {
             throw MemmoryError();
         }
@@ -365,7 +365,7 @@ List<T>& List<T>::append(const List<T>& l) {
 
 template <typename T>
 List<T>& List<T>::append(const T data) {
-    Shared<ListNode<T>> node(new ListNode<T>);
+    Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
     if (node == nullptr) {
         throw MemmoryError();
     }
@@ -377,7 +377,7 @@ List<T>& List<T>::append(const T data) {
 template <typename T>
 List<T>& List<T>::append(Shared<ListNode<T>> node) {
     if (this->head == nullptr) {
-        Shared<ListNode<T>> head(new ListNode<T>);
+        Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
         if (head == nullptr) {
             throw MemmoryError();
         }
@@ -388,7 +388,7 @@ List<T>& List<T>::append(Shared<ListNode<T>> node) {
     }
 
     Shared<ListNode<T>> cur(this->tail);
-    Shared<ListNode<T>> new_node(new ListNode<T>);
+    Shared<ListNode<T>> new_node = std::make_shared<ListNode<T>>();
     if (new_node == nullptr) {
         throw MemmoryError();
     }
@@ -449,7 +449,7 @@ List<T>& List<T>::insertFront(const List<T>& l) {
         return *this;
     }
     Shared<ListNode<T>> cur;
-    Shared<ListNode<T>> head(new ListNode<T>);
+    Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
     if (head == nullptr) {
         throw MemmoryError();
     }
@@ -459,7 +459,7 @@ List<T>& List<T>::insertFront(const List<T>& l) {
     cur = l.head->next;
 
     for (; cur; cur = cur->next) {
-        Shared<ListNode<T>> node(new ListNode<T>);
+        Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
         if (node == nullptr) {
             throw MemmoryError();
         }
@@ -475,7 +475,7 @@ List<T>& List<T>::insertFront(const List<T>& l) {
 
 template <typename T>
 List<T>& List<T>::insertFront(const T data) {
-    Shared<ListNode<T>> new_head(new ListNode<T>);
+    Shared<ListNode<T>> new_head = std::make_shared<ListNode<T>>();
     if (new_head == nullptr) {
         throw MemmoryError();
     }
@@ -491,7 +491,7 @@ List<T>& List<T>::insertFront(Shared<ListNode<T>> node) {
         return *this;
     }
 
-    Shared<ListNode<T>> new_head(new ListNode<T>);
+    Shared<ListNode<T>> new_head = std::make_shared<ListNode<T>>();
     if (new_head == nullptr) {
         throw MemmoryError();
     }
@@ -505,7 +505,7 @@ template <typename T>
 List<T>& List<T>::insertAfter(Shared<ListNode<T>> after, const T data) {
     Shared<ListNode<T>> f(this->find(after));
     Shared<ListNode<T>> tmp(f->getNext());
-    Shared<ListNode<T>> node(new ListNode<T>);
+    Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
     if (node == nullptr) {
         throw MemmoryError();
     }
@@ -525,7 +525,7 @@ List<T>& List<T>::insertAfter(Shared<ListNode<T>> after, List<T>& l) {
     Shared<ListNode<T>> f(this->find(after));
     Shared<ListNode<T>> buf(f->getNext());
     Shared<ListNode<T>> cur;
-    Shared<ListNode<T>> head(new ListNode<T>);
+    Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
     if (head == nullptr) {
         throw MemmoryError();
     }
@@ -535,7 +535,7 @@ List<T>& List<T>::insertAfter(Shared<ListNode<T>> after, List<T>& l) {
     cur = l.head->getNext();
 
     for (; cur; cur = cur->getNext()) {
-        Shared<ListNode<T>> node(new ListNode<T>);
+        Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
         if (node == nullptr) {
             throw MemmoryError();
         }
@@ -558,7 +558,7 @@ template <typename T>
 List<T>& List<T>::insertAfter(Shared<ListNode<T>> after, Shared<ListNode<T>> node) {
     Shared<ListNode<T>> f(this->find(after));
     Shared<ListNode<T>> tmp(f->next);
-    Shared<ListNode<T>> new_node(new ListNode<T>);
+    Shared<ListNode<T>> new_node = std::make_shared<ListNode<T>>();
     if (new_node == nullptr) {
         throw MemmoryError();
     }
@@ -583,7 +583,7 @@ List<T>& List<T>::insertBefore(Shared<ListNode<T>> before, const T data) {
     }
 
     if (tmp != nullptr) {
-        Shared<ListNode<T>> node(new ListNode<T>);
+        Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
         if (node == nullptr) {
             throw MemmoryError();
         }
@@ -609,7 +609,7 @@ List<T>& List<T>::insertBefore(Shared<ListNode<T>> before, List<T>& l) {
 
     if (tmp != nullptr) {
         Shared<ListNode<T>> curr;
-        Shared<ListNode<T>> head(new ListNode<T>);
+        Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
         if (head == nullptr) {
             throw MemmoryError();
         }
@@ -619,7 +619,7 @@ List<T>& List<T>::insertBefore(Shared<ListNode<T>> before, List<T>& l) {
         curr = l.head->getNext();
 
         for (; curr; curr = curr->getNext()) {
-            Shared<ListNode<T>> node(new ListNode<T>);
+            Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
             if (node == nullptr) {
                 throw MemmoryError();
             }
@@ -642,7 +642,7 @@ List<T>& List<T>::insertBefore(Shared<ListNode<T>> before, List<T>& l) {
 template <typename T>
 List<T>& List<T>::insertAfter(ListIterator<T>& iter, const T data) {
     Shared<ListNode<T>> f(this->find(*iter));
-    Shared<ListNode<T>> node(new ListNode<T>);
+    Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
     if (node == nullptr) {
         throw MemmoryError();
     }
@@ -656,7 +656,7 @@ List<T>& List<T>::insertAfter(ListIterator<T>& iter, const List<T>& l) {
     Shared<ListNode<T>> f = this->find(*iter);
     Shared<ListNode<T>> buf(f->next);
     Shared<ListNode<T>> cur;
-    Shared<ListNode<T>> head(new ListNode<T>);
+    Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
     if (head == nullptr) {
         throw MemmoryError();
     }
@@ -666,7 +666,7 @@ List<T>& List<T>::insertAfter(ListIterator<T>& iter, const List<T>& l) {
     cur = l.head->next;
 
     for (; cur; cur = cur->next) {
-        Shared<ListNode<T>> node(new ListNode<T>);
+        Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
         if (node == nullptr) {
             throw MemmoryError();
         }
@@ -693,7 +693,7 @@ List<T>& List<T>::insertBefore(Shared<ListNode<T>> before, Shared<ListNode<T>> n
     }
 
     if (tmp != nullptr) {
-        Shared<ListNode<T>> new_node(new ListNode<T>);
+        Shared<ListNode<T>> new_node = std::make_shared<ListNode<T>>();
         if (new_node == nullptr) {
             throw MemmoryError();
         }
@@ -711,7 +711,7 @@ List<T>& List<T>::insertBefore(Shared<ListNode<T>> before, Shared<ListNode<T>> n
 template <typename T>
 List<T>& List<T>::insertBefore(ListIterator<T>& iter, const T data) {
     Shared<ListNode<T>> before(*iter);
-    Shared<ListNode<T>> node(new ListNode<T>);
+    Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
     if (node == nullptr) {
         throw MemmoryError();
     }
@@ -723,7 +723,7 @@ List<T>& List<T>::insertBefore(ListIterator<T>& iter, const T data) {
 template <typename T>
 List<T>& List<T>::insertBefore(ListIteratorConst<T>& iter, const T data) {
     Shared<ListNode<T>> before(*iter);
-    Shared<ListNode<T>> node(new ListNode<T>);
+    Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
     if (node == nullptr) {
         throw MemmoryError();
     }
@@ -744,7 +744,7 @@ List<T>& List<T>::insertBefore(ListIterator<T>& iter, const List<T>& l) {
 
     if (tmp != nullptr) {
         Shared<ListNode<T>> curr;
-        Shared<ListNode<T>> head(new ListNode<T>);
+        Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
         if (head == nullptr) {
             throw MemmoryError();
         }
@@ -754,7 +754,7 @@ List<T>& List<T>::insertBefore(ListIterator<T>& iter, const List<T>& l) {
         curr = l.head->next;
 
         for (; curr; curr = curr->next) {
-            Shared<ListNode<T>> node(new ListNode<T>);
+            Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
             if (node == nullptr) {
                 throw MemmoryError();
             }
@@ -785,7 +785,7 @@ List<T>& List<T>::insertBefore(ListIteratorConst<T>& iter, const List<T>& l) {
 
     if (tmp != nullptr) {
         Shared<ListNode<T>> curr;
-        Shared<ListNode<T>> head(new ListNode<T>);
+        Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
         if (head == nullptr) {
             throw MemmoryError();
         }
@@ -795,7 +795,7 @@ List<T>& List<T>::insertBefore(ListIteratorConst<T>& iter, const List<T>& l) {
         curr = l.head->next;
 
         for (; curr; curr = curr->next) {
-            Shared<ListNode<T>> node(new ListNode<T>);
+            Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
             if (node == nullptr) {
                 throw MemmoryError();
             }
