@@ -9,6 +9,7 @@ ADD_EXECUTABLE(
         tests
         src/main.cpp
         src/testing_neg.cpp src/testing_constructors.cpp
+        src/testing_append_methods.cpp src/testing_insert_methods.cpp
         src/testing_methods.cpp src/testing_iterators.cpp
         src/testing_operators.cpp
 )

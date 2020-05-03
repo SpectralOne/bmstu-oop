@@ -535,8 +535,8 @@ List<T>& List<T>::insertAfter(Shared<ListNode<T>> after, const T data) {
     }
 
     node->set(data);
-    f->setNext(*node);
-    node->setNext(*tmp);
+    f->setNext(node);
+    node->setNext(tmp);
     if (f == this->tail) {
         this->tail = node;
     }
@@ -601,7 +601,7 @@ template <typename T>
 List<T>& List<T>::insertBefore(Shared<ListNode<T>> before, const T data) {
     Shared<ListNode<T>> cur(this->head);
     Shared<ListNode<T>> tmp(nullptr);
-    while (cur && cur->next != before.next) {
+    while (cur && cur->next != before->next) {
         tmp = cur;
         cur = cur->getNext();
     }
@@ -626,7 +626,7 @@ template <typename T>
 List<T>& List<T>::insertBefore(Shared<ListNode<T>> before, List<T>& l) {
     Shared<ListNode<T>> cur(this->head);
     Shared<ListNode<T>> tmp(nullptr);
-    while (cur && cur->next != before.next) {
+    while (cur && cur->next != before->next) {
         tmp = cur;
         cur = cur->getNext();
     }

@@ -97,33 +97,6 @@ TEST(ListMethodsSuite, ListReverse) {
   ASSERT_EQ(l, ld);
 }
 
-TEST(ListMethodsSuite, Append) {
-  List<int> l;
-  const ListData<int> ld{3};
-
-  ASSERT_NO_THROW(l.append(3));
-  ASSERT_EQ(l, ld);
-}
-
-TEST(ListMethodsSuite, AppendNode) {
-  List<int> l;
-  const ListData<int> ld{3};
-
-  Shared<ListNode<int>> node = std::make_shared<ListNode<int>>(3);
-
-  ASSERT_NO_THROW(l.append(node));
-  ASSERT_EQ(l, ld);
-}
-
-TEST(ListMethodsSuite, AppendList) {
-  List<int> l1{0, 1};
-  List<int> l2{3, 4};
-  const ListData<int> ld{0, 1, 3, 4};
-
-  ASSERT_NO_THROW(l1.append(l2));
-  ASSERT_EQ(l1, ld);
-}
-
 TEST(ListMethodsSuite, PopBackArg) {
   List<int> l{1, 2, 3};
   ListData<int> ld{1, 2};
@@ -171,16 +144,6 @@ TEST(ListMethodsSuite, PopFront) {
 TEST(ListMethodsSuite, PopFrontThrow) {
   List<int> l;
   ASSERT_THROW(l.popFrontArg(), EmptyList);
-}
-
-TEST(ListMethodsSuite, InsertFront) {
-  List<int> l{1, 3};
-  ListData<int> ld{0, 4, 1, 3};
-  
-  ASSERT_NO_THROW(l.insertFront(4));
-  ASSERT_NO_THROW(l.insertFront(0));
-
-  ASSERT_EQ(l, ld);
 }
 
 TEST(ListMethodsSuite, SuccsessfulFind) {

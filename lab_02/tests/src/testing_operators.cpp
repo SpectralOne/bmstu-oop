@@ -24,6 +24,13 @@ TEST(ListOperatorsSuite, PlusOperators) {
 
   ASSERT_NO_THROW(l2 += l3);
   ASSERT_EQ(l2, ld2);
+
+  List<int> l4{1, 2, 3, 4};
+  ListData<int> ld4{1, 2, 3, 4, 5};
+  Shared<ListNode<int>> node = std::make_shared<ListNode<int>>(5);
+
+  ASSERT_NO_THROW(l4 += node);
+  ASSERT_EQ(l4, ld4);
 }
 
 TEST(ListOperatorsSuite, AccessibilityBracketOperator) {
