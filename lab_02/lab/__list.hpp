@@ -256,7 +256,7 @@ size_t List<T>::size() const {
 }
 
 template <typename T>
-void List<T>::clear() {
+void List<T>::reset() {
     Shared<ListNode<T>> cur(this->head);
     for (; cur; cur = cur->next) {
         cur->set(0);
@@ -264,7 +264,15 @@ void List<T>::clear() {
 }
 
 template <typename T>
-void List<T>::flush() {
+void List<T>::reset(T data) {
+    Shared<ListNode<T>> cur(this->head);
+    for (; cur; cur = cur->next) {
+        cur->set(data);
+    }
+}
+
+template <typename T>
+void List<T>::clear() {
     if (!this->head) {
         throw EmptyList();
     }

@@ -37,24 +37,30 @@ TEST(ListMethodsSuite, UniqueNotEnoughNodes) {
   ASSERT_THROW(l.unique(), NotEnoughNodes);
 }
 
-TEST(ListMethodsSuite, Clear) {
-  List<int> l{1, 3};
-  const ListData<int> ld{0, 0};
+TEST(ListMethodsSuite, Reset) {
+  List<int> l1{1, 3};
+  const ListData<int> ld1{0, 0};
 
-  ASSERT_NO_THROW(l.clear());
-  ASSERT_EQ(l, ld);
+  ASSERT_NO_THROW(l1.reset());
+  ASSERT_EQ(l1, ld1);
+
+  List<int> l2{0, 0};
+  const ListData<int> ld2{1, 1};
+
+  ASSERT_NO_THROW(l2.reset(1));
+  ASSERT_EQ(l2, ld2);
 }
 
-TEST(ListMethodsSuite, Flush) {
+TEST(ListMethodsSuite, Clear) {
   List<int> l{1, 3};
-  ASSERT_NO_THROW(l.flush());
+  ASSERT_NO_THROW(l.clear());
 
   ASSERT_TRUE(l.isEmpty());
 }
 
-TEST(ListMethodsSuite, FlushEmptyList) {
+TEST(ListMethodsSuite, ClearEmptyList) {
   List<int> l;
-  ASSERT_THROW(l.flush(), EmptyList);
+  ASSERT_THROW(l.clear(), EmptyList);
 }
 
 TEST(ListMethodsSuite, AscendingSort) {

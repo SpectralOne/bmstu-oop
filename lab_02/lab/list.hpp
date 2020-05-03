@@ -47,6 +47,8 @@ class List {
 
     size_t size() const;
     void clear();
+    void reset();
+    void reset(T data);
     void flush();
     bool isEmpty() const;
     size_t length() const;
