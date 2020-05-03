@@ -6,6 +6,7 @@
 #include "list.hpp"
 #include "list_node.hpp"
 
+namespace flexlist {
 template <typename T>
 class ListIterator : public BaseIterator<ListNode<T>> {
  public:
@@ -70,5 +71,6 @@ class ListIteratorConst : public BaseIterator<ListNode<T>> {
     const List<T>* currentList;
     Shared<ListNode<T>> currentNode;
 };
+}  // namespace flexlist
 
 #endif  // LIST_ITERATOR_H

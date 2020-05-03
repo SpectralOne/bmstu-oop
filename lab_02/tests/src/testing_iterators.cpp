@@ -1,21 +1,21 @@
 #include "utils.h"
 
 TEST(ListIteratorsSuite, OutOfRangeAccess) {
-  List<int> a{1, 2};
-  ListIterator<int>it(a);
+  flexlist::List<int> a{1, 2};
+  flexlist::ListIterator<int>it(a);
 
-  ASSERT_THROW(it += 3, ListOutOfBounds);
+  ASSERT_THROW(it += 3, flexlist::ListOutOfBounds);
 }
 
 TEST(ListIteratorSuite, AssignIterator) {
-  List<int> l{1, 2, 3};
-  ASSERT_NO_THROW(ListIterator<int> it(l));
+  flexlist::List<int> l{1, 2, 3};
+  ASSERT_NO_THROW(flexlist::ListIterator<int> it(l));
 }
 
 TEST(ListIteratorsSuite, IteratorInsertAfter) {
-  List<int> l{1, 2, 3};
+  flexlist::List<int> l{1, 2, 3};
   const ListData<int> ld{1, 2, 3, 4};
-  ListIterator<int> it(l);
+  flexlist::ListIterator<int> it(l);
   
   it += 2;
   ASSERT_NO_THROW(l.insertAfter(it, 4));
@@ -23,9 +23,9 @@ TEST(ListIteratorsSuite, IteratorInsertAfter) {
 }
 
 TEST(ListIteratorsSuite, IteratorInsertBefore) {
-  List<int> l{1, 2, 3};
+  flexlist::List<int> l{1, 2, 3};
   const ListData<int> ld{1, 2, 4, 3};
-  ListIterator<int> it(l);
+  flexlist::ListIterator<int> it(l);
   
   it += 2;
   ASSERT_NO_THROW(l.insertBefore(it, 4));
@@ -33,15 +33,15 @@ TEST(ListIteratorsSuite, IteratorInsertBefore) {
 }
 
 TEST(ListIteratorsSuite, IteratorInequality) {
-  List<int> l1{1, 2, 3};
-  List<int> l2{1, 2, 3};
-  ListIterator<int> it1(l1);
-  ListIterator<int> it2(l2);
+  flexlist::List<int> l1{1, 2, 3};
+  flexlist::List<int> l2{1, 2, 3};
+  flexlist::ListIterator<int> it1(l1);
+  flexlist::ListIterator<int> it2(l2);
 
-  ASSERT_THROW(it1 > it2, IteratorCompareError);  
-  ASSERT_THROW(it1 >= it2, IteratorCompareError);  
-  ASSERT_THROW(it1 < it2, IteratorCompareError);  
-  ASSERT_THROW(it1 <= it2, IteratorCompareError); 
-  ASSERT_THROW(it1 == it2, IteratorCompareError);  
-  ASSERT_THROW(it1 != it2, IteratorCompareError);   
+  ASSERT_THROW(it1 > it2, flexlist::IteratorCompareError);  
+  ASSERT_THROW(it1 >= it2, flexlist::IteratorCompareError);  
+  ASSERT_THROW(it1 < it2, flexlist::IteratorCompareError);  
+  ASSERT_THROW(it1 <= it2, flexlist::IteratorCompareError); 
+  ASSERT_THROW(it1 == it2, flexlist::IteratorCompareError);  
+  ASSERT_THROW(it1 != it2, flexlist::IteratorCompareError);   
 }

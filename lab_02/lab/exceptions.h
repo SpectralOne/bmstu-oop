@@ -3,6 +3,7 @@
 #include <exception>
 #include <string>
 
+namespace flexlist {
 class ListException : public std::exception {
  public:
     explicit ListException(const std::string &msg)
@@ -56,3 +57,4 @@ class ConstructorBadArguments : public ListException {
     ConstructorBadArguments()
         : ListException("Bad arguments!") {}
 };
+}  // namespace flexlist

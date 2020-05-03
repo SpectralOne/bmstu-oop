@@ -5,6 +5,6 @@ TEST(ListNegSuite, CreationFromFile) {
     std::cout << entry.path() << std::endl;
 
     std::ifstream list_stream(entry.path());
-    ASSERT_THROW(List<int>l(list_stream), InvalidListStream);
+    ASSERT_THROW(flexlist::List<int>l(list_stream), flexlist::InvalidListStream);
   }
 }

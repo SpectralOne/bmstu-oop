@@ -6,6 +6,7 @@
 #include "list.hpp"
 #include "list_iterator.hpp"
 
+namespace flexlist {
 template <typename T>
 class List;
 template <typename T>
@@ -40,5 +41,6 @@ bool operator>(Shared<ListNode<T>> n1, Shared<ListNode<T>> n2);
 
 template <typename T>
 bool operator<(Shared<ListNode<T>> n1, Shared<ListNode<T>> n2);
+}  // namespace flexlist
 
 #endif  // LIST_NODE_H

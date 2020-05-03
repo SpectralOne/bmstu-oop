@@ -1,26 +1,26 @@
 #include "utils.h"
 
 TEST(ListMethodsSuite, IsEmpty) {
-  List<int> l;
+  flexlist::List<int> l;
   ASSERT_TRUE(l.isEmpty());
 
-  List<int> l2{1, 2, 3};
+  flexlist::List<int> l2{1, 2, 3};
   ASSERT_FALSE(l2.isEmpty());
 }
 
 TEST(ListMethodsSuite, Length) {
-  List<int> l{1, 2};
+  flexlist::List<int> l{1, 2};
   ASSERT_EQ(l.length(), 2);
 }
 
 TEST(ListMethodsSuite, Size) {
-  List<int> l{1, 2};
-  const size_t sz = 2 * sizeof(ListNode<int>);
+  flexlist::List<int> l{1, 2};
+  const size_t sz = 2 * sizeof(flexlist::ListNode<int>);
   ASSERT_EQ(l.size(), sz);
 }
 
 TEST(ListMethodsSuite, UniqueNoThrow) {
-  List<int> l{1, 2, 1, 1};
+  flexlist::List<int> l{1, 2, 1, 1};
   ListData<int> ld{1, 2};
   
   ASSERT_NO_THROW(l.unique());
@@ -28,23 +28,23 @@ TEST(ListMethodsSuite, UniqueNoThrow) {
 }
 
 TEST(ListMethodsSuite, UniqueEmptyList) {
-  List<int> l;
-  ASSERT_THROW(l.unique(), EmptyList);
+  flexlist::List<int> l;
+  ASSERT_THROW(l.unique(), flexlist::EmptyList);
 }
 
 TEST(ListMethodsSuite, UniqueNotEnoughNodes) {
-  List<int> l{1};
-  ASSERT_THROW(l.unique(), NotEnoughNodes);
+  flexlist::List<int> l{1};
+  ASSERT_THROW(l.unique(), flexlist::NotEnoughNodes);
 }
 
 TEST(ListMethodsSuite, Reset) {
-  List<int> l1{1, 3};
+  flexlist::List<int> l1{1, 3};
   const ListData<int> ld1{0, 0};
 
   ASSERT_NO_THROW(l1.reset());
   ASSERT_EQ(l1, ld1);
 
-  List<int> l2{0, 0};
+  flexlist::List<int> l2{0, 0};
   const ListData<int> ld2{1, 1};
 
   ASSERT_NO_THROW(l2.reset(1));
@@ -52,19 +52,19 @@ TEST(ListMethodsSuite, Reset) {
 }
 
 TEST(ListMethodsSuite, Clear) {
-  List<int> l{1, 3};
+  flexlist::List<int> l{1, 3};
   ASSERT_NO_THROW(l.clear());
 
   ASSERT_TRUE(l.isEmpty());
 }
 
 TEST(ListMethodsSuite, ClearEmptyList) {
-  List<int> l;
-  ASSERT_THROW(l.clear(), EmptyList);
+  flexlist::List<int> l;
+  ASSERT_THROW(l.clear(), flexlist::EmptyList);
 }
 
 TEST(ListMethodsSuite, AscendingSort) {
-  List<int> l{4, 3, 2, 1};
+  flexlist::List<int> l{4, 3, 2, 1};
   const ListData<int> ld{1, 2, 3, 4};
 
   ASSERT_NO_THROW(l.sort());
@@ -72,7 +72,7 @@ TEST(ListMethodsSuite, AscendingSort) {
 }
 
 TEST(ListMethodsSuite, DescendingSort) {
-  List<int> l{1, 2, 3};
+  flexlist::List<int> l{1, 2, 3};
   const ListData<int> ld{3, 2, 1};
 
   ASSERT_NO_THROW(l.sort(false));
@@ -80,17 +80,17 @@ TEST(ListMethodsSuite, DescendingSort) {
 }
 
 TEST(ListMethodsSuite, EmptyListSort) {
-  List<int> l;
-  ASSERT_THROW(l.sort(), EmptyList);
+  flexlist::List<int> l;
+  ASSERT_THROW(l.sort(), flexlist::EmptyList);
 }
 
 TEST(ListMethodsSuite, OneNodeSort) {
-  List<int> l{1};
-  ASSERT_THROW(l.sort(), NotEnoughNodes);
+  flexlist::List<int> l{1};
+  ASSERT_THROW(l.sort(), flexlist::NotEnoughNodes);
 }
 
 TEST(ListMethodsSuite, ListReverse) {
-  List<int> l{1, 2, 3, 4};
+  flexlist::List<int> l{1, 2, 3, 4};
   const ListData<int> ld{4, 3, 2, 1};
 
   ASSERT_NO_THROW(l.reverse());
@@ -98,7 +98,7 @@ TEST(ListMethodsSuite, ListReverse) {
 }
 
 TEST(ListMethodsSuite, PopBackArg) {
-  List<int> l{1, 2, 3};
+  flexlist::List<int> l{1, 2, 3};
   ListData<int> ld{1, 2};
   int arg;
 
@@ -109,12 +109,12 @@ TEST(ListMethodsSuite, PopBackArg) {
 }
 
 TEST(ListMethodsSuite, PopBackArgThrow) {
-  List<int> l;
-  ASSERT_THROW(l.popBackArg(), EmptyList);
+  flexlist::List<int> l;
+  ASSERT_THROW(l.popBackArg(), flexlist::EmptyList);
 }
 
 TEST(ListMethodsSuite, PopBack) {
-  List<int> l{1, 2, 3};
+  flexlist::List<int> l{1, 2, 3};
   ListData<int> ld{1, 2};
 
   ASSERT_NO_THROW(l.popBack());
@@ -123,17 +123,17 @@ TEST(ListMethodsSuite, PopBack) {
 }
 
 TEST(ListMethodsSuite, PopBackThrow) {
-  List<int> l;
-  ASSERT_THROW(l.popBack(), EmptyList);
+  flexlist::List<int> l;
+  ASSERT_THROW(l.popBack(), flexlist::EmptyList);
 }
 
 TEST(ListMethodsSuite, PopFrontArgThrow) {
-  List<int> l;
-  ASSERT_THROW(l.popFrontArg(), EmptyList);
+  flexlist::List<int> l;
+  ASSERT_THROW(l.popFrontArg(), flexlist::EmptyList);
 }
 
 TEST(ListMethodsSuite, PopFront) {
-  List<int> l{1, 2, 3};
+  flexlist::List<int> l{1, 2, 3};
   ListData<int> ld{2, 3};
 
   ASSERT_NO_THROW(l.popFrontArg());
@@ -142,21 +142,21 @@ TEST(ListMethodsSuite, PopFront) {
 }
 
 TEST(ListMethodsSuite, PopFrontThrow) {
-  List<int> l;
-  ASSERT_THROW(l.popFrontArg(), EmptyList);
+  flexlist::List<int> l;
+  ASSERT_THROW(l.popFrontArg(), flexlist::EmptyList);
 }
 
 TEST(ListMethodsSuite, SuccsessfulFind) {
-  List<int> l{1, 3};
-  Shared<ListNode<int>> ptr;
+  flexlist::List<int> l{1, 3};
+  Shared<flexlist::ListNode<int>> ptr;
 
   ASSERT_NO_THROW(ptr = l.find(1));
   ASSERT_EQ(ptr->getData(), 1);
 }
 
 TEST(ListMethodsSuite, UnSuccsessfulFind) {
-  List<int> l{1, 3};
-  Shared<ListNode<int>> ptr;
+  flexlist::List<int> l{1, 3};
+  Shared<flexlist::ListNode<int>> ptr;
 
   ASSERT_NO_THROW(ptr = l.find(4));
   ASSERT_EQ(ptr, nullptr);

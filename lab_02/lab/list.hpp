@@ -16,6 +16,7 @@ using Shared = std::shared_ptr<T>;
 #include "list_node.hpp"
 #include "__list_node.hpp"
 
+namespace flexlist {
 template <typename T>
 class List {
  public:
@@ -114,6 +115,7 @@ class List {
     Shared<ListNode<T>> head;
     Shared<ListNode<T>> tail;
 };
+}  // namespace flexlist
 
 #include "__list.hpp"
 
