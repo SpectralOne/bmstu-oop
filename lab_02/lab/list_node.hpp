@@ -35,4 +35,10 @@ class ListNode {
     T data;
 };
 
+template <typename T>
+bool operator>(Shared<ListNode<T>> n1, Shared<ListNode<T>> n2);
+
+template <typename T>
+bool operator<(Shared<ListNode<T>> n1, Shared<ListNode<T>> n2);
+
 #endif  // LIST_NODE_H

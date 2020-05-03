@@ -885,11 +885,11 @@ void List<T>::sort(bool ascending) {
         while (nxt) {
             bool swap = false;
             if (ascending) {
-                if (cur->getData() > nxt->getData()) {
+                if (cur > nxt) {
                     swap = true;
                 }
             } else {
-                if (cur->getData() < nxt->getData()) {
+                if (cur < nxt) {
                     swap = true;
                 }
             }
