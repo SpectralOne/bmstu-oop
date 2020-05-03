@@ -933,6 +933,10 @@ namespace flexlist {
 
     template <typename T>
     std::vector<T> List<T>::to_vect() const {
+        if (this->head == nullptr) {
+            throw EmptyList();
+        }
+
         std::vector<T> vec;
         vec.reserve(this->length());
         Shared<ListNode<T>> tmp = this->head;
