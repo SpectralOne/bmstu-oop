@@ -1,75 +1,70 @@
 #ifndef LIST_ITERATOR_H
 #define LIST_ITERATOR_H
 
-#include "base_iterator.hpp"
+#include <cstddef>
+#include <algorithm>
+#include <iterator>
+#include <ctime>
+
 #include "exceptions.h"
 #include "list.hpp"
 #include "list_node.hpp"
 
+template <typename T>
+using base = std::iterator<std::forward_iterator_tag, T>;
+
+template <typename T>
+using pointer = typename base<T>::pointer;
+
+template <typename T>
+using reference = typename base<T>::reference;
+
+template <typename T>
+using difference_type = typename base<T>::difference_type;
+
+template <typename T>
+using const_pointer = const T*;
+
+template <typename T>
+using const_reference = const T&;
+
+
 namespace flexlist {
 template <typename T>
-class ListIterator : public BaseIterator<ListNode<T>> {
+class Iterator : public std::iterator<std::forward_iterator_tag, T> {
  public:
-    ListIterator(const List<T>& l);
-    ListIterator(const ListIterator<T>& it);
-    ~ListIterator();
+    Iterator() = default;
+    explicit Iterator(List<T>& l) : node(l.head) { }
+    explicit Iterator(Shared<ListNode<T>> n) : node(n) { }
+    Iterator(const Iterator<T>&) = default;
+    Iterator<T>& operator=(const Iterator<T>&) = default;
+    ~Iterator() = default;
 
-    void first();
     void next();
-    void last();
-    bool range();
-    const T current();
+    bool check() noexcept;
+    T get();
+    T getNext();
+    Weak<ListNode<T>> getNode();
 
-    Shared<List<T>> operator=(List<T> &l);
-    ListIterator<T>& operator=(const ListIterator<T>& it);
+    operator bool() noexcept;
 
-    ListIterator<T>& operator++();
-    ListIterator<T> operator++(int);
-    Shared<ListNode<T>> operator*();
-    Shared<ListNode<T>> operator->();
-    ListIterator<T>& operator+=(size_t n);
-    ListIterator<T> operator+(size_t n) const;
+    reference<T> operator*();
+    const_reference<T> operator*() const;
 
-    bool operator!=(const ListIterator<T>& it) const;
-    bool operator==(const ListIterator<T>& it) const;
-    bool operator<(const ListIterator<T>& it) const;
-    bool operator>(const ListIterator<T>& it) const;
-    bool operator<=(const ListIterator<T>& it) const;
-    bool operator>=(const ListIterator<T>& it) const;
+    pointer<T> operator->();
+    const_pointer<T> operator->() const;
+    
+    Iterator<T>& operator++();
+    const Iterator<T> operator++(int);
+    Iterator<T>& operator+=(difference_type<T> n);
 
+    friend class ListNode<T>;
+
+    template <typename U> friend bool operator==(const Iterator<U>& a, const Iterator<U>& b);
+    template <typename U> friend void swap(Iterator<U>& a, Iterator<U>& b);
+    template <typename U> friend bool operator<(const Iterator<U>& a, const Iterator<U>& b);
  private:
-    const List<T> *currentList;
-    Shared<ListNode<T>> currentNode;
-};
-
-template <class T>
-class ListIteratorConst : public BaseIterator<ListNode<T>> {
- public:
-    ListIteratorConst(const List<T>& l);
-    ListIteratorConst(const ListIteratorConst<T>& it);
-    ~ListIteratorConst();
-
-    void first();
-    void next();
-    void last();
-    bool range();
-    const T& current() const;
-
-    const Shared<ListNode<T>> operator*();
-    const Shared<ListNode<T>> operator->();
-
-    bool operator!=(const ListIteratorConst<T>& it) const;
-    bool operator==(const ListIteratorConst<T>& it) const;
-    bool operator<(const ListIteratorConst<T>& it) const;
-    bool operator>(const ListIteratorConst<T>& it) const;
-    bool operator<=(const ListIteratorConst<T>& it) const;
-    bool operator>=(const ListIteratorConst<T>& it) const;
-
-    int difference(const ListIteratorConst<T>& it);
-
- private:
-    const List<T>* currentList;
-    Shared<ListNode<T>> currentNode;
+    Weak<ListNode<T>> node;
 };
 }  // namespace flexlist
 

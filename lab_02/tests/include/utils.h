@@ -14,7 +14,7 @@ namespace fs = std::filesystem;
 extern fs::path glob_test_dir;
 
 template <typename T>
-using ListData = std::vector<T>;
+using ListData = flexlist::List<T>;
 
 template <typename T>
 ListData<T> createListData(std::istream& is) {
@@ -30,7 +30,7 @@ ListData<T> createListData(std::istream& is) {
     ListData<T> list_data;
     T arg;
     while (is >> arg) {
-        list_data.push_back(arg);
+        list_data.pushBack(arg);
     }
     
     if (!is.eof()) {
@@ -39,15 +39,3 @@ ListData<T> createListData(std::istream& is) {
 
   return list_data;
 }
-
-namespace flexlist {
-template <typename T>
-bool operator==(const List<T>& list, const ListData<T>& list_data) {
-    return list.to_vect() == list_data;
-}
-
-template <typename T>
-bool operator==(const ListData<T>& list_data, const List<T>& list) {
-    return list_data == list.to_vect();
-}
-} // namespace flexlist

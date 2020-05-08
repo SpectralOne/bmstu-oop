@@ -20,23 +20,44 @@ TEST(ListBaseSuite, CreationFromFile) {
   }
 }
 
+TEST(ListBaseSuite, CreationFromIstream) {
+  for (auto& entry : fs::directory_iterator(glob_test_dir / "list_creation")) {
+    std::cout << entry.path() << std::endl;
+    flexlist::List<int> l;
+    std::ifstream list_stream(entry.path());
+    ASSERT_NO_THROW(list_stream >> l);
+
+    list_stream.clear();
+    list_stream.seekg(0);
+    flexlist::List<int> list;
+    list_stream >> list;
+
+    list_stream.clear();
+    list_stream.seekg(0);
+    ListData<int> expectedcurrentList = createListData<int>(list_stream);
+
+    ASSERT_EQ(expectedcurrentList, list);
+  }
+}
+
 TEST(ListBaseSuite, CreationFromInitializerList) {
   ASSERT_NO_THROW(flexlist::List<int>{1});
 
   flexlist::List<int> list{1, 2, 3};
   ListData<int> list_data{1, 2, 3};
   
-  ASSERT_EQ(list.length(), list_data.size());
+  ASSERT_EQ(list.size(), list_data.size());
   ASSERT_EQ(list, list_data);
 }
 
-TEST(ListBaseSuite, CreationFromVector) {
-  ASSERT_NO_THROW(flexlist::List<int>(std::vector<int>(1)));
+TEST(ListBaseSuite, CreationFromArray) {
+  int array[5] = {1, 2, 3, 4, 5};
+  ASSERT_NO_THROW(flexlist::List<int>(array, 5));
 
-  ListData<int> list_data{1, 2, 3};
-  flexlist::List<int> list(list_data);
+  ListData<int> list_data{1, 2, 3, 4, 5};
+  flexlist::List<int> list(array, 5);
 
-  ASSERT_EQ(list.length(), list_data.size());
+  ASSERT_EQ(list.size(), list_data.size());
   ASSERT_EQ(list, list_data);
 }
 

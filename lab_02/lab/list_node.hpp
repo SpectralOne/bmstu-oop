@@ -10,7 +10,7 @@ namespace flexlist {
 template <typename T>
 class List;
 template <typename T>
-class ListIterator;
+class Iterator;
 
 template <typename T>
 class ListNode {
@@ -24,23 +24,15 @@ class ListNode {
     Shared<ListNode<T>> getNext();
     void destroyNext();
     T getData() const;
-    void set(T data);
-
-    List<T>& operator+(List<T>& l);
+    void setData(T data);
 
     friend class List<T>;
-    friend class ListIterator<T>;
+    friend class Iterator<T>;
 
  private:
     Shared<ListNode<T>> next;
     T data;
 };
-
-template <typename T>
-bool operator>(Shared<ListNode<T>> n1, Shared<ListNode<T>> n2);
-
-template <typename T>
-bool operator<(Shared<ListNode<T>> n1, Shared<ListNode<T>> n2);
 }  // namespace flexlist
 
 #endif  // LIST_NODE_H

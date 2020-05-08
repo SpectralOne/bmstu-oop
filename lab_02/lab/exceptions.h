@@ -6,8 +6,18 @@
 namespace flexlist {
 class ListException : public std::exception {
  public:
-    explicit ListException(const std::string &msg)
-        : m_msg(msg) {}
+    explicit ListException(
+                           const std::string& filename,
+                           const std::string& classname,
+                           const int line,
+                           const char *time,
+                           const std::string& info) {
+        m_msg = "In: "          + filename             +
+                "\ninside: "    + classname            +
+                "\nat line: "   + std::to_string(line) +
+                "\nat: "        + time                 +
+                "­\noccured: "   + info;
+    }
 
     const char *what() const noexcept override {
         return m_msg.c_str();
@@ -18,43 +28,56 @@ class ListException : public std::exception {
 
 class MemmoryError : public ListException {
  public:
-    MemmoryError()
-        : ListException("Memmory error occured!") {}
+    MemmoryError(
+                 const std::string& filename,
+                 const std::string& classname,
+                 const int line,
+                 const char *time,
+                 const std::string& info = "Memmory error")
+    : ListException(filename, classname, line, time, info) { }
 };
 
 class InvalidListStream : public ListException {
  public:
-    InvalidListStream()
-        : ListException("Error occurred while reading from stream!") {}
+    InvalidListStream(
+                      const std::string& filename,
+                      const std::string& classname,
+                      const int line,
+                      const char *time,
+                      const std::string& info = "Reading from stream failed")
+    : ListException(filename, classname, line, time, info) { }
 };
 
 class ListOutOfBounds : public ListException {
  public:
-    ListOutOfBounds()
-        : ListException("List out of bounds!") {}
+    ListOutOfBounds(
+                    const std::string& filename,
+                    const std::string& classname,
+                    const int line,
+                    const char *time,
+                    const std::string& info = "Out of bounds access")
+    : ListException(filename, classname, line, time, info) { }
 };
 
 class EmptyList : public ListException {
  public:
-    EmptyList()
-        : ListException("Empty List!") {}
-};
-
-class IteratorCompareError : public ListException {
- public:
-    IteratorCompareError()
-        : ListException("Different iterators!") {}
-};
-
-class NotEnoughNodes : public ListException {
- public:
-    NotEnoughNodes()
-        : ListException("Not enough nodes!") {}
+    EmptyList(
+              const std::string& filename,
+              const std::string& classname,
+              const int line,
+              const char *time,
+              const std::string& info = "Empty list access")
+    : ListException(filename, classname, line, time, info) { }
 };
 
 class ConstructorBadArguments : public ListException {
  public:
-    ConstructorBadArguments()
-        : ListException("Bad arguments!") {}
+    ConstructorBadArguments(
+                            const std::string& filename,
+                            const std::string& classname,
+                            const int line,
+                            const char *time,
+                            const std::string& info = "Bad arguments received")
+    : ListException(filename, classname, line, time, info) { }
 };
-}  // namespace flexlist
+}  // flexlist namespace

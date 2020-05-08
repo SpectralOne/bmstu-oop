@@ -2,286 +2,153 @@
 #define __LIST_ITERATOR_H
 
 namespace flexlist {
+
     template <typename T>
-    ListIterator<T>::ListIterator(const List<T>& l) {
-        this->currentList = &l;
-        this->currentNode = l.head;
+    void Iterator<T>::next() {
+        auto sp = this->node.lock();
+        this->node = sp.get()->getNext();
     }
 
     template <typename T>
-    ListIterator<T>::ListIterator(const ListIterator<T>& it) {
-        this->currentList = it.currentList;
-        this->currentNode = it.currentNode;
+    bool Iterator<T>::check() noexcept {
+        return !node.expired();
     }
 
     template <typename T>
-    ListIterator<T>::~ListIterator() {
-        this->currentList = nullptr;
-        this->currentNode = nullptr;
+    T Iterator<T>::get() {
+        if (!this->check()) {
+            time_t t_time = time(NULL);
+            throw ListOutOfBounds(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
+        }
+        return this->node.lock()->data;
     }
 
     template <typename T>
-    ListIterator<T>& ListIterator<T>::operator=(const ListIterator<T>& it) {
-        this->currentList = it.currentList;
-        this->currentNode = it.currentNode;
-        return *this;
+    T Iterator<T>::getNext() {
+        if (node.lock() == List<T>::end() || node.next().lock() == List<T>::end()) {
+            time_t t_time = time(NULL);
+            throw ListOutOfBounds(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
+        }
+        return this->node.next().lock()->data;
     }
 
     template <typename T>
-    void ListIterator<T>::first() {
-        this->currentNode = this->currentList->head;
+    Weak<ListNode<T>> Iterator<T>::getNode() {
+        return this->node;
     }
 
     template <typename T>
-    void ListIterator<T>::last() {
-        this->currentNode = this->currentList->tail;
+    Iterator<T>::operator bool() noexcept {
+        return !this->node.expired();
     }
 
     template <typename T>
-    void ListIterator<T>::next() {
-        if (!this->range())
-            throw ListOutOfBounds();
-
-        this->currentNode = this->currentNode->next;
+    reference<T> Iterator<T>::operator*() {
+        if (!this->check()) {
+            time_t t_time = time(NULL);
+            throw ListOutOfBounds(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
+        }
+        return node.lock()->data;
     }
 
     template <typename T>
-    bool ListIterator<T>::range() {
-        return !(this->currentNode == nullptr);
+    const_reference<T> Iterator<T>::operator*() const { 
+        if (!this->check()) {
+            time_t t_time = time(NULL);
+            throw ListOutOfBounds(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
+        }
+        return node.lock()->data; 
+    }
+    
+    template <typename T>
+    pointer<T> Iterator<T>::operator->() { 
+        if (!this->check()) {
+            time_t t_time = time(NULL);
+            throw ListOutOfBounds(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
+        }
+        return &(node.lock()->data); 
     }
 
     template <typename T>
-    ListIterator<T>& ListIterator<T>::operator++() {
-        if (!this->range())
-            throw ListOutOfBounds();
-        this->next();
-
-        return *this;
+    const_pointer<T> Iterator<T>::operator->() const { 
+        if (!this->check()) {
+            time_t t_time = time(NULL);
+            throw ListOutOfBounds(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
+        }
+        return &(node.lock()->data); 
     }
 
     template <typename T>
-    ListIterator<T> ListIterator<T>::operator++(int) {
-        if (!this->range())
-            throw ListOutOfBounds();
-
-        ListIterator<T> r(*this);
-        this->next();
-
-        return r;
+    Iterator<T>& Iterator<T>::operator++() { 
+        if (!this->check()) {
+            time_t t_time = time(NULL);
+            throw ListOutOfBounds(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
+        }
+        this->next(); return *this; 
     }
 
     template <typename T>
-    const T ListIterator<T>::current() {
-        if (!this->range())
-            throw EmptyList();
-
-        return this->currentNode->getData();
+    const Iterator<T> Iterator<T>::operator++(int) { 
+        auto old = *this; 
+        ++(*this); 
+        return old; 
     }
-
+    
     template <typename T>
-    Shared<ListNode<T>> ListIterator<T>::operator*() {
-        return this->currentNode;
-    }
-
-    template <typename T>
-    Shared<ListNode<T>> ListIterator<T>::operator->() {
-        return this->currentNode;
-    }
-
-    template <typename T>
-    ListIterator<T>& ListIterator<T>::operator+=(size_t n) {
+    Iterator<T>& Iterator<T>::operator+=(difference_type<T> n) {
         while (n--) {
-            if (!this->range()) {
-                throw ListOutOfBounds();
+            if (!this->check()) {
+                time_t t_time = time(NULL);
+                throw ListOutOfBounds(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
             }
-            this->currentNode = this->currentNode->next;
+            ++(*this);
         }
-
         return *this;
     }
 
     template <typename T>
-    ListIterator<T> ListIterator<T>::operator+(size_t n) const {
-        ListIterator<T> it(*this);
-
-        it += n;
-
-        return it;
+    Iterator<T> operator+(const Iterator<T>& a, difference_type<T> b) {
+        return Iterator<T>(a) += b;
     }
 
     template <typename T>
-    bool ListIterator<T>::operator!=(const ListIterator<T>& it) const {
-        if (this->currentList != it.currentList) {
-            throw IteratorCompareError();
-        }
-
-        return this->currentNode != it.currentNode;
+    Iterator<T> operator+(difference_type<T> a, const Iterator<T>& b) {
+        return b + a;
     }
 
     template <typename T>
-    bool ListIterator<T>::operator==(const ListIterator<T>& it) const {
-        if (this->currentList != it.currentList) {
-            throw IteratorCompareError();
-        }
-
-        return this->currentNode == it.currentNode;
+    void swap(Iterator<T>& a, Iterator<T>& b) { 
+        std::swap(a.node, b.node); 
     }
 
     template <typename T>
-    bool ListIterator<T>::operator<(const ListIterator<T>& it) const {
-        if (this->currentList != it.currentList) {
-            throw IteratorCompareError();
-        }
-
-        return this->currentNode < it.currentNode;
+    bool operator==(const Iterator<T>& a, const Iterator<T>& b) { 
+        return a.node.lock().get() != b.node.lock().get();
     }
 
     template <typename T>
-    bool ListIterator<T>::operator>(const ListIterator<T>& it) const {
-        if (this->currentList != it.currentList) {
-            throw IteratorCompareError();
-        }
-
-        return this->currentNode > it.currentNode;
+    bool operator!=(const Iterator<T>& a, const Iterator<T>& b) { 
+        return !(a == b); 
     }
 
     template <typename T>
-    bool ListIterator<T>::operator<=(const ListIterator<T>& it) const {
-        if (this->currentList != it.currentList) {
-            throw IteratorCompareError();
-        }
-
-        return this->currentNode <= it.currentNode;
+    bool operator<(const Iterator<T>& a, const Iterator<T>& b) { 
+        return a.node.lock().get() < b.node.lock().get();
     }
 
     template <typename T>
-    bool ListIterator<T>::operator>=(const ListIterator<T>& it) const {
-        if (this->currentList != it.currentList) {
-            throw IteratorCompareError();
-        }
-
-        return this->currentNode >= it.currentNode;
-    }
-
-    //––––––––––––––––––––––––––––––––––––––––
-
-    template <typename T>
-    ListIteratorConst<T>::ListIteratorConst(const List<T>& l) {
-        this->currentList = &l;
-        this->currentNode = l.head;
+    bool operator>(const Iterator<T>& a, const Iterator<T>& b) { 
+        return b < a; 
     }
 
     template <typename T>
-    ListIteratorConst<T>::ListIteratorConst(const ListIteratorConst<T>& it) {
-        this->currentList = it.currentList;
-        this->currentNode = it.currentNode;
+    bool operator<=(const Iterator<T>& a, const Iterator<T>& b) { 
+        return !(b > a); 
     }
 
     template <typename T>
-    ListIteratorConst<T>::~ListIteratorConst() {
-        this->currentList = nullptr;
-        this->currentNode = nullptr;
-    }
-
-    template <typename T>
-    void ListIteratorConst<T>::first() {
-        this->currentNode = this->currentList->get_head();
-    }
-
-    template <typename T>
-    void ListIteratorConst<T>::last() {
-        if (this->currentList->get_head() == nullptr) {
-            throw EmptyList();
-        }
-
-        this->currentNode = this->currentList->get_tail();
-    }
-
-    template <typename T>
-    void ListIteratorConst<T>::next() {
-        if (!this->range()) {
-            throw ListOutOfBounds();
-        }
-
-        this->currentNode = this->currentNode->getNext();
-    }
-
-    template <typename T>
-    bool ListIteratorConst<T>::range() {
-        return this->currentNode == nullptr;
-    }
-
-    template <typename T>
-    const T& ListIteratorConst<T>::current() const {
-        if (!this->range()) {
-            throw EmptyList();
-        }
-
-        return this->currentNode->getData();
-    }
-
-    template <typename T>
-    const Shared<ListNode<T>> ListIteratorConst<T>::operator*() {
-        return *this->currentNode;
-    }
-
-    template <typename T>
-    const Shared<ListNode<T>> ListIteratorConst<T>::operator->() {
-        return this->currentNode;
-    }
-
-    template <typename T>
-    bool ListIteratorConst<T>::operator!=(const ListIteratorConst<T>& it) const {
-        if (this->currentList != it.currentList) {
-            throw IteratorCompareError();
-        }
-
-        return this->currentNode != it.currentNode;
-    }
-
-    template <typename T>
-    bool ListIteratorConst<T>::operator==(const ListIteratorConst<T>& it) const {
-        if (this->currentList != it.currentList) {
-            throw IteratorCompareError();
-        }
-
-        return this->currentNode == it.currentNode;
-    }
-
-    template <typename T>
-    bool ListIteratorConst<T>::operator<(const ListIteratorConst<T>& it) const {
-        if (this->currentList != it.currentList) {
-            throw IteratorCompareError();
-        }
-
-        return this->currentNode < it.currentNode;
-    }
-
-    template <typename T>
-    bool ListIteratorConst<T>::operator>(const ListIteratorConst<T>& it) const {
-        if (this->currentList != it.currentList) {
-            throw IteratorCompareError();
-        }
-
-        return this->currentNode > it.currentNode;
-    }
-
-    template <typename T>
-    bool ListIteratorConst<T>::operator<=(const ListIteratorConst<T>& it) const {
-        if (this->currentList != it.currentList) {
-            throw IteratorCompareError();
-        }
-
-        return this->currentNode <= it.currentNode;
-    }
-
-    template <typename T>
-    bool ListIteratorConst<T>::operator>=(const ListIteratorConst<T>& it) const {
-        if (this->currentList != it.currentList) {
-            throw IteratorCompareError();
-        }
-
-        return this->currentNode >= it.currentNode;
+    bool operator>=(const Iterator<T>& a, const Iterator<T>& b) { 
+        return !(a < b); 
     }
 }  // namespace flexlist
 

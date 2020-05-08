@@ -49,18 +49,8 @@ namespace flexlist {
     }
 
     template <typename T>
-    void ListNode<T>::set(T data) {
+    void ListNode<T>::setData(T data) {
         this->data = data;
-    }
-
-    template <typename T>
-    bool operator>(Shared<ListNode<T>> n1, Shared<ListNode<T>> n2) {
-        return n1->getData() > n2->getData();
-    }
-
-    template <typename T>
-    bool operator<(Shared<ListNode<T>> n1, Shared<ListNode<T>> n2) {
-        return n1->getData() < n2->getData();
     }
 }  // namespace flexlist
 

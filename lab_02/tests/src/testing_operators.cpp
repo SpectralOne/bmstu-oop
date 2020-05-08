@@ -24,31 +24,20 @@ TEST(ListOperatorsSuite, PlusOperators) {
 
   ASSERT_NO_THROW(l2 += l3);
   ASSERT_EQ(l2, ld2);
-
-  flexlist::List<int> l4{1, 2, 3, 4};
-  ListData<int> ld4{1, 2, 3, 4, 5};
-  Shared<flexlist::ListNode<int>> node = std::make_shared<flexlist::ListNode<int>>(5);
-
-  ASSERT_NO_THROW(l4 += node);
-  ASSERT_EQ(l4, ld4);
 }
 
-TEST(ListOperatorsSuite, AccessibilityBracketOperator) {
-  const flexlist::List<int> l1{1, 2, 3};
-  ASSERT_NO_THROW(l1[1]);
-  ASSERT_EQ(l1[1], 2);
+TEST(IteratorsOperatorsSuite, AccessibilityOperators) {
+  flexlist::List<int> l{1, 2, 3};
+  flexlist::Iterator<int> it(l);
 
-  const flexlist::List<int> l2{1, 2, 3, 4};
-  ASSERT_THROW(l2[100], flexlist::ListOutOfBounds);
-
-  const flexlist::List<int> l3;
-  ASSERT_THROW(l3[0], flexlist::EmptyList);
+  ASSERT_NO_THROW(*it);
+  ASSERT_EQ(*it, 1);
 }
 
-TEST(ListOperatorsSuite, AssignBracketOperator) {
-  flexlist::List<int> l1{1, 2, 3};
-  const ListData<int> ld{1, 1, 3};
+TEST(IteratorsOperatorsSuite, PlusOperators) {
+  flexlist::List<int> l{1, 2, 3};
+  flexlist::Iterator<int> it(l);
 
-  ASSERT_NO_THROW(l1[1] = 1);
-  ASSERT_EQ(l1, ld);
+  ASSERT_NO_THROW(it += 1);
+  ASSERT_EQ(*it, 2);
 }

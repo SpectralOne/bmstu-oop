@@ -2,46 +2,29 @@
 
 TEST(ListIteratorsSuite, OutOfRangeAccess) {
   flexlist::List<int> a{1, 2};
-  flexlist::ListIterator<int>it(a);
+  flexlist::Iterator<int>it(a);
 
   ASSERT_THROW(it += 3, flexlist::ListOutOfBounds);
 }
 
 TEST(ListIteratorSuite, AssignIterator) {
   flexlist::List<int> l{1, 2, 3};
-  ASSERT_NO_THROW(flexlist::ListIterator<int> it(l));
+  ASSERT_NO_THROW(flexlist::Iterator<int> it(l));
 }
 
-TEST(ListIteratorsSuite, IteratorInsertAfter) {
-  flexlist::List<int> l{1, 2, 3};
-  const ListData<int> ld{1, 2, 3, 4};
-  flexlist::ListIterator<int> it(l);
-  
-  it += 2;
-  ASSERT_NO_THROW(l.insertAfter(it, 4));
+TEST(ListIteratorSuite, Insert) {
+  flexlist::List<int> l{1, 3};
+  ListData<int> ld{1, 2, 3};
+  flexlist::Iterator<int> it(l);
+
+  ASSERT_NO_THROW(l.insert(it, 2));
   ASSERT_EQ(l, ld);
 }
-
-TEST(ListIteratorsSuite, IteratorInsertBefore) {
+TEST(ListIteratorSuite, Remove) {
   flexlist::List<int> l{1, 2, 3};
-  const ListData<int> ld{1, 2, 4, 3};
-  flexlist::ListIterator<int> it(l);
-  
-  it += 2;
-  ASSERT_NO_THROW(l.insertBefore(it, 4));
+  ListData<int> ld{1, 3};
+  flexlist::Iterator<int> it(l);
+
+  ASSERT_NO_THROW(l.remove(it));
   ASSERT_EQ(l, ld);
-}
-
-TEST(ListIteratorsSuite, IteratorInequality) {
-  flexlist::List<int> l1{1, 2, 3};
-  flexlist::List<int> l2{1, 2, 3};
-  flexlist::ListIterator<int> it1(l1);
-  flexlist::ListIterator<int> it2(l2);
-
-  ASSERT_THROW(it1 > it2, flexlist::IteratorCompareError);  
-  ASSERT_THROW(it1 >= it2, flexlist::IteratorCompareError);  
-  ASSERT_THROW(it1 < it2, flexlist::IteratorCompareError);  
-  ASSERT_THROW(it1 <= it2, flexlist::IteratorCompareError); 
-  ASSERT_THROW(it1 == it2, flexlist::IteratorCompareError);  
-  ASSERT_THROW(it1 != it2, flexlist::IteratorCompareError);   
 }

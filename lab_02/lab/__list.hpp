@@ -1,6 +1,6 @@
 #ifndef __LIST_H
 #define __LIST_H
-#include <assert.h>
+#include <ctime>
 #include <stdlib.h>
 
 namespace flexlist {
@@ -16,13 +16,14 @@ namespace flexlist {
             this->head = nullptr;
             this->tail = nullptr;
         } else {
+            time_t t_time = time(NULL);
             Shared<ListNode<T>> cur(nullptr);
             Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
             if (head == nullptr) {
-                throw MemmoryError();
+                throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
             }
 
-            head->set(l.head->getData());
+            head->setData(l.head->getData());
             this->head = head;
 
             Shared<ListNode<T>> tmp(head);
@@ -31,11 +32,11 @@ namespace flexlist {
             for (; cur; cur = cur->next) {
                 Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
                 if (node == nullptr) {
-                    throw MemmoryError();
+                    throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
                 }
 
                 tmp->setNext(node);
-                node->set(cur->getData());
+                node->setData(cur->getData());
                 this->tail = node;
                 tmp = tmp->next;
             }
@@ -43,15 +44,16 @@ namespace flexlist {
     }
 
     template <typename T>
-    List<T>::List(List<T>&& l) {
+    List<T>::List(List<T>&& l) noexcept {
         this->head = l.head;
         this->tail = l.tail;
     }
 
     template <typename T>
     List<T>::List(T data, size_t n) {
+        time_t t_time = time(NULL);
         if (n < 0) {
-            throw ConstructorBadArguments();
+            throw ConstructorBadArguments(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
 
         if (n == 0) {
@@ -59,20 +61,20 @@ namespace flexlist {
         } else {
             Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
             if (head == nullptr) {
-                throw MemmoryError();
+                throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
             }
 
-            head->set(data);
+            head->setData(data);
             this->head = head;
 
             Shared<ListNode<T>> cur = head;
             for (size_t i = 0; i < n - 1; ++i) {
                 Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
                 if (node == nullptr) {
-                    throw MemmoryError();
+                    throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
                 }
 
-                node->set(data);
+                node->setData(data);
                 cur->setNext(node);
                 cur = node;
             }
@@ -81,44 +83,13 @@ namespace flexlist {
     }
 
     template <typename T>
-    List<T>::List(ListIterator<T>& first, ListIterator<T>& last) {
-        if (!first.range() || !last.range()) {
-            throw ListOutOfBounds();
-        }
-
-        ListIterator<T> f(first);
-        Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
-        if (head == nullptr) {
-            throw MemmoryError();
-        }
-
-        head->set(f.current());
-        this->head = head;
-        ++f;
-        Shared<ListNode<T>> cur(head);
-
-        for (; f != last; ++f) {
-            Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
-            if (node == nullptr) {
-                throw MemmoryError();
-            }
-
-            node->set(f.current());
-            cur->setNext(node);
-            cur = node;
-        }
-        this->tail = cur;
-    }
-
-    template <typename T>
-    List<T>::List(std::vector<T> vec) {
-        this->head = nullptr;
-        this->tail = nullptr;
-
-        if (vec.size()) {
-            for (auto &node : vec) {
-                this->append(node);
-            }
+    List<T>::List(T* array, const size_t size) {
+        if (array == nullptr) {
+            time_t t_time = time(NULL);
+            throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
+        }     
+        for (size_t i = 0; i < size; ++i) {
+            this->pushBack(array[i]);
         }
     }
 
@@ -127,32 +98,33 @@ namespace flexlist {
         this->head = nullptr;
         this->tail = nullptr;
 
+        time_t t_time = time(NULL);
         if (!is) {
-            throw InvalidListStream();
+            throw InvalidListStream(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
 
         if (is.peek() == std::ifstream::traits_type::eof()) {
-            throw InvalidListStream();
+            throw InvalidListStream(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
 
         T arg;
         while (is >> arg) {
-            this->append(arg);
+            this->pushBack(arg);
         }
 
         if (!is.eof()) {
-            throw InvalidListStream();
+            throw InvalidListStream(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
     }
 
     template <typename T>
-    List<T>::List(std::initializer_list<T> il) {
+    List<T>::List(const std::initializer_list<T>& il) {
         this->head = nullptr;
         this->tail = nullptr;
 
         if (il.size()) {
             for (auto &node : il) {
-                this->append(node);
+                this->pushBack(node);
             }
         }
     }
@@ -172,42 +144,6 @@ namespace flexlist {
     }
 
     template <typename T>
-    T& List<T>::operator[](const size_t pos) {
-        if (this->head == nullptr) {
-            throw EmptyList();
-        }
-
-        if (pos >= this->length()) {
-            throw ListOutOfBounds();
-        }
-
-        Shared<ListNode<T>> cur(this->head);
-        for (size_t i = 0; i < pos; ++i) {
-            cur = cur->next;
-        }
-
-        return cur->data;
-    }
-
-    template <typename T>
-    T List<T>::operator[](const size_t pos) const {
-        if (this->head == nullptr) {
-            throw EmptyList();
-        }
-
-        if (pos >= this->length()) {
-            throw ListOutOfBounds();
-        }
-
-        Shared<ListNode<T>> cur(this->head);
-        for (size_t i = 0; i < pos; ++i) {
-            cur = cur->next;
-        }
-
-        return cur->data;
-    }
-
-    template <typename T>
     List<T>& List<T>::operator=(List<T>&& l) {
         this->head = l.head;
         this->tail = l.tail;
@@ -215,38 +151,27 @@ namespace flexlist {
     }
 
     template <typename T>
+    List<T>& List<T>::operator=(const std::initializer_list<T>& il) {
+        for (auto &i : il) {
+            this->pushBack(i);
+        }
+    }
+
+    template <typename T>
     List<T>& List<T>::operator+=(const List<T>& l) {
-        this->append(l);
+        this->pushBack(l);
         return *this;
     }
 
     template <typename T>
     List<T>& List<T>::operator+=(const Shared<ListNode<T>> data) {
-        this->append(data);
+        this->pushBack(data);
         return *this;
     }
 
     template <typename T>
     List<T>& List<T>::operator+=(const T data) {
-        this->append(data);
-        return *this;
-    }
-
-    template <typename T>
-    List<T>& List<T>::operator+(const List<T>& l) {
-        this->append(l);
-        return *this;
-    }
-
-    template <typename T>
-    List<T>& List<T>::operator+(const Shared<ListNode<T>> data) {
-        this->append(data);
-        return *this;
-    }
-
-    template <typename T>
-    List<T>& List<T>::operator+(const T data) {
-        this->append(data);
+        this->pushBack(data);
         return *this;
     }
 
@@ -272,41 +197,21 @@ namespace flexlist {
     }
 
     template <typename T>
-    size_t List<T>::size() const {
-        return (this->length() * sizeof(ListNode<T>));
-    }
-
-    template <typename T>
-    void List<T>::reset() {
-        Shared<ListNode<T>> cur(this->head);
-        for (; cur; cur = cur->next) {
-            cur->set(0);
-        }
-    }
-
-    template <typename T>
-    void List<T>::reset(T data) {
-        Shared<ListNode<T>> cur(this->head);
-        for (; cur; cur = cur->next) {
-            cur->set(data);
-        }
-    }
-
-    template <typename T>
     void List<T>::clear() {
         if (!this->head) {
-            throw EmptyList();
+            time_t t_time = time(NULL);
+            throw EmptyList(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
         this->~List();
     }
 
     template <typename T>
-    bool List<T>::isEmpty() const {
+    bool List<T>::isEmpty() const noexcept {
         return (this->head == nullptr);
     }
 
     template <typename T>
-    size_t List<T>::length() const {
+    constexpr size_t List<T>::size() const noexcept {
         Shared<ListNode<T>> cur(this->head);
         size_t s = 0;
         for (; cur; cur = cur->next) {
@@ -317,63 +222,7 @@ namespace flexlist {
     }
 
     template <typename T>
-    void List<T>::unique() {
-        if (this->head == nullptr) {
-            throw EmptyList();
-        }
-
-        if (this->length() < 2) {
-            throw NotEnoughNodes();
-        }
-
-        this->sort();
-        Shared<ListNode<T>> current(this->head);
-        Shared<ListNode<T>> next_next(nullptr);
-        while (current->next) {
-            if (current->data == current->next->data) {
-                next_next = current->next->next;
-                del(current->next);
-                current->setNext(next_next);
-            } else {
-                current = current->next;
-            }
-        }
-    }
-
-    template <typename T>
-    ListIterator<T>& List<T>::begin() {
-        ListIterator<T> it(*this);
-        it.first();
-
-        return it;
-    }
-
-    template <typename T>
-    ListIterator<T>& List<T>::end() {
-        ListIterator<T> it(*this);
-        it.last();
-
-        return it;
-    }
-
-    template <typename T>
-    ListIteratorConst<T>& List<T>::begin() const {
-        ListIteratorConst<T> it(*this);
-        it.first();
-
-        return it;
-    }
-
-    template <typename T>
-    ListIteratorConst<T>& List<T>::end() const {
-        ListIteratorConst<T> it(*this);
-        it.last();
-
-        return it;
-    }
-
-    template <typename T>
-    List<T>& List<T>::append(const List<T>& l) {
+    List<T>& List<T>::pushBack(const List<T>& l) {
         if (this->head == nullptr) {
             *this = l;
             return *this;
@@ -383,32 +232,35 @@ namespace flexlist {
         for (; tmp; tmp = tmp->next) {
             Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
             if (node == nullptr) {
-                throw MemmoryError();
+                time_t t_time = time(NULL);
+                throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
             }
-            node->set(tmp->getData());
-            this->append(node);
+            node->setData(tmp->getData());
+            this->pushBack(node);
         }
 
         return *this;
     }
 
     template <typename T>
-    List<T>& List<T>::append(const T data) {
+    List<T>& List<T>::pushBack(const T data) {
         Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
         if (node == nullptr) {
-            throw MemmoryError();
+            time_t t_time = time(NULL);
+            throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
-        node->set(data);
-        this->append(node);
+        node->setData(data);
+        this->pushBack(node);
         return *this;
     }
 
     template <typename T>
-    List<T>& List<T>::append(Shared<ListNode<T>> node) {
+    List<T>& List<T>::pushBack(Shared<ListNode<T>> node) {
         if (this->head == nullptr) {
             Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
             if (head == nullptr) {
-                throw MemmoryError();
+                time_t t_time = time(NULL);
+                throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
             }
             head->data = node->data;
             this->head = head;
@@ -419,7 +271,8 @@ namespace flexlist {
         Shared<ListNode<T>> cur(this->tail);
         Shared<ListNode<T>> new_node = std::make_shared<ListNode<T>>();
         if (new_node == nullptr) {
-            throw MemmoryError();
+            time_t t_time = time(NULL);
+            throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
         new_node->data = node->data;
         cur->setNext(new_node);
@@ -428,61 +281,22 @@ namespace flexlist {
     }
 
     template <typename T>
-    T List<T>::popBackArg() {
-        if (this->tail == nullptr) {
-            throw EmptyList();
-        }
-        T arg = this->tail->getData();
-        del(this->tail);
-
-        return arg;
-    }
-
-    template <typename T>
-    void List<T>::popBack() {
-        if (this->tail == nullptr) {
-            throw EmptyList();
-        }
-        del(this->tail);
-    }
-
-    template <typename T>
-    T List<T>::popFrontArg() {
-        if (this->head == nullptr) {
-            throw EmptyList();
-        }
-        T arg = this->head->getData();
-
-        del(this->head);
-
-        return arg;
-    }
-
-    template <typename T>
-    void List<T>::popFront() {
-        if (this->head == nullptr) {
-            throw EmptyList();
-        }
-
-        del(this->head);
-    }
-
-    template <typename T>
-    List<T>& List<T>::insertFront(const List<T>& l) {
+    List<T>& List<T>::pushFront(const List<T>& l) {
         if (l.head == nullptr) {
             return *this;
         }
 
         if (this->head == nullptr) {
-            this->append(l);
+            this->pushBack(l);
             return *this;
         }
         Shared<ListNode<T>> cur;
         Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
         if (head == nullptr) {
-            throw MemmoryError();
+            time_t t_time = time(NULL);
+            throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
-        head->set(l.head->getData());
+        head->setData(l.head->getData());
 
         Shared<ListNode<T>> tmp(head);
         cur = l.head->next;
@@ -490,10 +304,11 @@ namespace flexlist {
         for (; cur; cur = cur->next) {
             Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
             if (node == nullptr) {
-                throw MemmoryError();
+                time_t t_time = time(NULL);
+                throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
             }
             tmp->setNext(node);
-            node->set(cur->getData());
+            node->setData(cur->getData());
             node->setNext(this->head);
             tmp = tmp->next;
         }
@@ -503,420 +318,94 @@ namespace flexlist {
     }
 
     template <typename T>
-    List<T>& List<T>::insertFront(const T data) {
+    List<T>& List<T>::pushFront(const T data) {
         Shared<ListNode<T>> new_head = std::make_shared<ListNode<T>>();
         if (new_head == nullptr) {
-            throw MemmoryError();
+            time_t t_time = time(NULL);
+            throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
-        new_head->set(data);
-        this->insertFront(new_head);
+        new_head->setData(data);
+        this->pushFront(new_head);
         return *this;
     }
 
     template <typename T>
-    List<T>& List<T>::insertFront(Shared<ListNode<T>> node) {
+    List<T>& List<T>::pushFront(Shared<ListNode<T>> node) {
         if (this->head == nullptr) {
-            this->append(node);
+            this->pushBack(node);
             return *this;
         }
 
         Shared<ListNode<T>> new_head = std::make_shared<ListNode<T>>();
         if (new_head == nullptr) {
-            throw MemmoryError();
+            time_t t_time = time(NULL);
+            throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
-        new_head->set(node->data);
+        new_head->setData(node->data);
         new_head->setNext(this->head);
         this->head = new_head;
         return *this;
     }
 
     template <typename T>
-    List<T>& List<T>::insertAfter(Shared<ListNode<T>> after, const T data) {
-        Shared<ListNode<T>> f(this->find(after));
-        Shared<ListNode<T>> tmp(f->getNext());
-        Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
-        if (node == nullptr) {
-            throw MemmoryError();
-        }
-
-        node->set(data);
-        f->setNext(node);
-        node->setNext(tmp);
-        if (f == this->tail) {
-            this->tail = node;
-        }
-
-        return *this;
-    }
-
-    template <typename T>
-    List<T>& List<T>::insertAfter(Shared<ListNode<T>> after, List<T>& l) {
-        Shared<ListNode<T>> f(this->find(after));
-        Shared<ListNode<T>> buf(f->getNext());
-        Shared<ListNode<T>> cur;
-        Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
-        if (head == nullptr) {
-            throw MemmoryError();
-        }
-        head->set(l.head->getData());
-
-        Shared<ListNode<T>> tmp(head);
-        cur = l.head->getNext();
-
-        for (; cur; cur = cur->getNext()) {
-            Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
-            if (node == nullptr) {
-                throw MemmoryError();
-            }
-
-            tmp->setNext(node);
-            node->set(cur->getData());
-            node->setNext(buf);
-
-            if (f == this->tail) {
-                this->tail = node;
-            }
-            tmp = tmp->getNext();
-        }
-        f->setNext(head);
-
-        return *this;
-    }
-
-    template <typename T>
-    List<T>& List<T>::insertAfter(Shared<ListNode<T>> after, Shared<ListNode<T>> node) {
-        Shared<ListNode<T>> f(this->find(after));
-        Shared<ListNode<T>> tmp(f->next);
-        Shared<ListNode<T>> new_node = std::make_shared<ListNode<T>>();
-        if (new_node == nullptr) {
-            throw MemmoryError();
-        }
-
-        new_node->set(node->getData());
-        f->setNext(new_node);
-        new_node->setNext(tmp);
-
-        if (f == this->tail) {
-            this->tail = new_node;
-        }
-        return *this;
-    }
-
-    template <typename T>
-    List<T>& List<T>::insertBefore(Shared<ListNode<T>> before, const T data) {
-        Shared<ListNode<T>> cur(this->head);
-        Shared<ListNode<T>> tmp(nullptr);
-        while (cur && cur->next != before->next) {
-            tmp = cur;
-            cur = cur->getNext();
-        }
-
-        if (tmp != nullptr) {
-            Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
-            if (node == nullptr) {
-                throw MemmoryError();
-            }
-
-            node->set(data);
-            tmp->setNext(node);
-            node->setNext(cur);
-            return *this;
-        } else {
-            this->insertFront(data);
-            return *this;
-        }
-    }
-
-    template <typename T>
-    List<T>& List<T>::insertBefore(Shared<ListNode<T>> before, List<T>& l) {
-        Shared<ListNode<T>> cur(this->head);
-        Shared<ListNode<T>> tmp(nullptr);
-        while (cur && cur->next != before->next) {
-            tmp = cur;
-            cur = cur->getNext();
-        }
-
-        if (tmp != nullptr) {
-            Shared<ListNode<T>> curr;
-            Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
-            if (head == nullptr) {
-                throw MemmoryError();
-            }
-            head->set(l.head->getData());
-
-            Shared<ListNode<T>> buf(head);
-            curr = l.head->getNext();
-
-            for (; curr; curr = curr->getNext()) {
-                Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
-                if (node == nullptr) {
-                    throw MemmoryError();
-                }
-
-                buf->setNext(node);
-                node->set(curr->getData());
-                node->setNext(cur);
-                buf = buf->getNext();
-            }
-
-            tmp->setNext(head);
-            return *this;
-
-        } else {
-            this->insertFront(l);
-            return *this;
-        }
-    }
-
-    template <typename T>
-    List<T>& List<T>::insertAfter(ListIterator<T>& iter, const T data) {
-        Shared<ListNode<T>> f(this->find(*iter));
-        Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
-        if (node == nullptr) {
-            throw MemmoryError();
-        }
-        node->set(data);
-        this->insertAfter(f, node);
-        return *this;
-    }
-
-    template <typename T>
-    List<T>& List<T>::insertAfter(ListIterator<T>& iter, const List<T>& l) {
-        Shared<ListNode<T>> f = this->find(*iter);
-        Shared<ListNode<T>> buf(f->next);
-        Shared<ListNode<T>> cur;
-        Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
-        if (head == nullptr) {
-            throw MemmoryError();
-        }
-        head->set(l.head->getData());
-
-        Shared<ListNode<T>> tmp(head);
-        cur = l.head->next;
-
-        for (; cur; cur = cur->next) {
-            Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
-            if (node == nullptr) {
-                throw MemmoryError();
-            }
-            tmp->setNext(node);
-            node->set(cur->getData());
-            node->setNext(buf);
-            if (f == this->tail) {
-                this->tail = node;
-            }
-            tmp = tmp->next;
-        }
-        f->setNext(head);
-
-        return *this;
-    }
-
-    template <typename T>
-    List<T>& List<T>::insertBefore(Shared<ListNode<T>> before, Shared<ListNode<T>> node) {
-        Shared<ListNode<T>> cur(this->head);
-        Shared<ListNode<T>> tmp(nullptr);
-        while (cur && cur->next != before->next) {
-            tmp = cur;
-            cur = cur->next;
-        }
-
-        if (tmp != nullptr) {
-            Shared<ListNode<T>> new_node = std::make_shared<ListNode<T>>();
-            if (new_node == nullptr) {
-                throw MemmoryError();
-            }
-
-            new_node->set(node->getData());
-            tmp->setNext(new_node);
-            new_node->setNext(cur);
-            return *this;
-        } else {
-            this->insertFront(node);
-            return *this;
-        }
-    }
-
-    template <typename T>
-    List<T>& List<T>::insertBefore(ListIterator<T>& iter, const T data) {
-        Shared<ListNode<T>> before(*iter);
-        Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
-        if (node == nullptr) {
-            throw MemmoryError();
-        }
-        node->set(data);
-        this->insertBefore(before, node);
-        return *this;
-    }
-
-    template <typename T>
-    List<T>& List<T>::insertBefore(ListIteratorConst<T>& iter, const T data) {
-        Shared<ListNode<T>> before(*iter);
-        Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
-        if (node == nullptr) {
-            throw MemmoryError();
-        }
-        node->set(data);
-        this->insertBefore(before, node);
-        return *this;
-    }
-
-    template <typename T>
-    List<T>& List<T>::insertBefore(ListIterator<T>& iter, const List<T>& l) {
-        Shared<ListNode<T>> cur(this->head);
-        Shared<ListNode<T>> before(*iter);
-        Shared<ListNode<T>> tmp(nullptr);
-        while (cur && cur->next != before->next) {
-            tmp = cur;
-            cur = cur->next;
-        }
-
-        if (tmp != nullptr) {
-            Shared<ListNode<T>> curr;
-            Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
-            if (head == nullptr) {
-                throw MemmoryError();
-            }
-            head->set(l.head->getData());
-
-            Shared<ListNode<T>> buf = head;
-            curr = l.head->next;
-
-            for (; curr; curr = curr->next) {
-                Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
-                if (node == nullptr) {
-                    throw MemmoryError();
-                }
-                buf->setNext(node);
-                node->set(curr->getData());
-                node->setNext(cur);
-                buf = buf->next;
-            }
-
-            tmp->setNext(head);
-            return *this;
-
-        } else {
-            this->insertFront(l);
-            return *this;
-        }
-    }
-
-    template <typename T>
-    List<T>& List<T>::insertBefore(ListIteratorConst<T>& iter, const List<T>& l) {
-        Shared<ListNode<T>> cur = this->head;
-        Shared<ListNode<T>> before = (*iter);
-        Shared<ListNode<T>> tmp = nullptr;
-        while (cur && cur->next != before->next) {
-            tmp = cur;
-            cur = cur->next;
-        }
-
-        if (tmp != nullptr) {
-            Shared<ListNode<T>> curr;
-            Shared<ListNode<T>> head = std::make_shared<ListNode<T>>();
-            if (head == nullptr) {
-                throw MemmoryError();
-            }
-            head->set(l.head->getData());
-
-            Shared<ListNode<T>> buf = head;
-            curr = l.head->next;
-
-            for (; curr; curr = curr->next) {
-                Shared<ListNode<T>> node = std::make_shared<ListNode<T>>();
-                if (node == nullptr) {
-                    throw MemmoryError();
-                }
-                buf->setNext(node);
-                node->set(curr->getData());
-                node->setNext(cur);
-                buf = buf->next;
-            }
-
-            tmp->setNext(head);
-            return *this;
-
-        } else {
-            this->insertFront(l);
-            return *this;
-        }
-    }
-
-    template <typename T>
-    Shared<ListNode<T>> List<T>::find(const Shared<ListNode<T>> node) const {
+    T List<T>::popBack() {
         if (this->head == nullptr) {
-            throw EmptyList();
+            time_t t_time = time(NULL);
+            throw EmptyList(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
-        Shared<ListNode<T>> cur = this->head;
-        while (cur && cur->getData() != node->getData()) {
-            cur = cur->next;
+        Shared<ListNode<T>> ptr(head);
+        Shared<ListNode<T>> prev(head);
+        while (ptr != tail) {
+            prev = ptr;
+            ptr = ptr->next;
         }
-
-        return cur;
+        T data = ptr->data;
+        ptr.reset();
+        tail = prev;
+        tail->next = nullptr;
+        return data;
     }
-
+    
     template <typename T>
-    Shared<ListNode<T>> List<T>::find(const T data) const {
+    T List<T>::popFront() {
         if (this->head == nullptr) {
-            throw EmptyList();
+            time_t t_time = time(NULL);
+            throw EmptyList(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
-        Shared<ListNode<T>> cur(this->head);
-        while (cur && cur->getData() != data) {
-            cur = cur->getNext();
-        }
-
-        return cur;
+        Shared<ListNode<T>> cur(head->next);
+        T data = head->data;
+        head.reset();
+        this->head = cur;
+    
+        return data;
     }
 
-    template <typename T>
-    void List<T>::sort(bool ascending) {
+    template<typename T>
+    void List<T>::remove(Iterator<T>& prev) {
         if (this->head == nullptr) {
-            throw EmptyList();
+            time_t t_time = time(NULL);
+            throw EmptyList(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
 
-        if (this->head->next == nullptr) {
-            throw NotEnoughNodes();
-        }
-
-        bool done = false;
-        while (!done) {
-            Shared<ListNode<T>> *pv(&this->head);
-            Shared<ListNode<T>> cur(this->head);
-            Shared<ListNode<T>> nxt(this->head->next);
-
-            done = true;
-
-            while (nxt) {
-                bool swap = false;
-                if (ascending) {
-                    if (cur > nxt) {
-                        swap = true;
-                    }
-                } else {
-                    if (cur < nxt) {
-                        swap = true;
-                    }
-                }
-
-                if (swap) {
-                    cur->next = nxt->next;
-                    nxt->next = cur;
-                    *pv = nxt;
-                    done = false;
-                }
-
-                pv = &cur->next;
-                cur = nxt;
-                nxt = nxt->next;
-            }
-        }
+        Weak<ListNode<T>> curr = prev.getNode().lock()->next;
+        prev.getNode().lock()->next = curr.lock()->next;
+        curr.reset();
     }
+
+    template<typename T>
+    void List<T>::insert(Iterator<T>& prev, const T& data) {
+        Shared<ListNode<T>> new_ptr = std::make_shared<ListNode<T>>(data);
+        Shared<ListNode<T>> next = prev.getNode().lock()->next;
+        prev.getNode().lock()->next = new_ptr;
+        new_ptr->next = next;
+    }
+
 
     template <typename T>
     void List<T>::reverse() {
         if (this->head == nullptr) {
-            throw EmptyList();
+            time_t t_time = time(NULL);
+            throw EmptyList(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
 
         Shared<ListNode<T>> prev(nullptr);
@@ -932,97 +421,61 @@ namespace flexlist {
     }
 
     template <typename T>
-    std::vector<T> List<T>::to_vect() const {
-        if (this->head == nullptr) {
-            throw EmptyList();
-        }
-
-        std::vector<T> vec;
-        vec.reserve(this->length());
-        Shared<ListNode<T>> tmp = this->head;
-        for (; tmp; tmp = tmp->next) {
-            vec.push_back(tmp->getData());
-        }
-
-        return vec;
+    Iterator<T> List<T>::begin() noexcept {
+        return Iterator<T>(this->head);
     }
 
     template <typename T>
-    List<T>& List<T>::reset(Shared<ListNode<T>> node, T data) {
-        Shared<ListNode<T>> f(this->find(node));
-        f->set(data);
-        return *this;
+    Iterator<const T> List<T>::begin() const noexcept {
+        return Iterator<const T>(this->head);
     }
 
     template <typename T>
-    List<T>& List<T>::reset(Shared<ListNode<T>> node, Shared<ListNode<T>> temp) {
-        Shared<ListNode<T>> f(this->find(node));
-        f->set(temp->getData());
-        return *this;
+    Iterator<T> List<T>::end() noexcept {
+        return Iterator<T>(this->tail);
     }
 
     template <typename T>
-    List<T>& List<T>::reset(ListIterator<T>& iter, T data) {
-        Shared<ListNode<T>> f = this->find(*iter);
-        f->set(data);
-        return *this;
+    Iterator<const T> List<T>::end() const noexcept {
+        return Iterator<const T>(this->tail);
     }
-
-    template <typename T>
-    Shared<ListNode<T>> List<T>::del(const Shared<ListNode<T>> node) {
-        if (!this->head)
-            throw EmptyList();
-        Shared<ListNode<T>> f = this->find(node);
-
-        Shared<ListNode<T>> cur = this->head;
-        if (cur->getData() == node->getData()) {
-            this->head = this->head->next;
-            return cur;
-        }
-        for (; cur && cur->next != f; cur = cur->next)
-            ;
-        if (cur == nullptr)
-            return nullptr;
-        cur->setNext(f->next);
-
-        if (f == this->tail) {
-            Shared<ListNode<T>> tmp = this->head;
-            for (; tmp->next; tmp = tmp->next)
-                ;
-            this->tail = tmp;
-        }
-        return f;
-    }
-
-    template <typename T>
-    Shared<ListNode<T>> List<T>::del(ListIterator<T>& iter) {
-        if (!this->head)
-            throw EmptyList();
-        if ((!*iter) == this->tail)
-            throw ListOutOfBounds();
-
-        Shared<ListNode<T>> f = this->find(*iter);
-
-        f = f->getNext();
-
-        this->del(f);
-
-        return f;
-    }
-
+    
     template <typename T>
     std::ostream& operator<<(std::ostream& os, List<T>& l) {
         os << "List: ";
-        ListIterator<T> i(l);
-        if (!i.range()) {
+        
+        Iterator<T> i(l);
+        if (!i.check()) {
             os << "empty";
             return os;
         }
-        for (i.first(); i.range(); i++) {
-            os << i.current() << " ";
+        for (; i.check(); i++) {
+            os << *i << " -> ";
         }
-        os << "\n";
+        os << "nullptr\n";
         return os;
+    }
+
+    template <typename T>
+    std::istream& operator>>(std::istream& is, List<T>& l) {
+        time_t t_time = time(NULL);
+        if (!is) {
+            throw InvalidListStream(__FILE__, "istream >> overload", __LINE__, ctime(&t_time));
+        }
+
+        if (is.peek() == std::ifstream::traits_type::eof()) {
+            throw InvalidListStream(__FILE__, "istream >> overload", __LINE__, ctime(&t_time));
+        }
+
+        T arg;
+        while (is >> arg) {
+            l.pushBack(arg);
+        }
+
+        if (!is.eof()) {
+            throw InvalidListStream(__FILE__, "istream >> overload", __LINE__, ctime(&t_time));
+        }
+        return is;
     }
 }  // namespace flexlist
 
