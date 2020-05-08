@@ -1,13 +1,12 @@
 #pragma once
 
-#include "list.hpp"
-#include "exceptions.h"
-
 #include <gtest/gtest.h>
 
 #include <filesystem>
 #include <fstream>
 
+#include "list.hpp"
+#include "exceptions.h"
 
 namespace fs = std::filesystem;
 
@@ -18,7 +17,6 @@ using ListData = flexlist::List<T>;
 
 template <typename T>
 ListData<T> createListData(std::istream& is) {
-
     if (!is) {
         throw std::runtime_error("ListData reading failed");
     }
@@ -32,7 +30,7 @@ ListData<T> createListData(std::istream& is) {
     while (is >> arg) {
         list_data.pushBack(arg);
     }
-    
+
     if (!is.eof()) {
         throw std::runtime_error("ListData reading failed");
     }

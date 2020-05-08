@@ -1,7 +1,6 @@
 #ifndef __LIST_H
 #define __LIST_H
 #include <ctime>
-#include <stdlib.h>
 
 namespace flexlist {
     template <typename T>
@@ -87,7 +86,7 @@ namespace flexlist {
         if (array == nullptr) {
             time_t t_time = time(NULL);
             throw MemmoryError(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
-        }     
+        }
         for (size_t i = 0; i < size; ++i) {
             this->pushBack(array[i]);
         }
@@ -365,7 +364,7 @@ namespace flexlist {
         tail->next = nullptr;
         return data;
     }
-    
+
     template <typename T>
     T List<T>::popFront() {
         if (this->head == nullptr) {
@@ -376,7 +375,7 @@ namespace flexlist {
         T data = head->data;
         head.reset();
         this->head = cur;
-    
+
         return data;
     }
 
@@ -439,11 +438,11 @@ namespace flexlist {
     Iterator<const T> List<T>::end() const noexcept {
         return Iterator<const T>(this->tail);
     }
-    
+
     template <typename T>
     std::ostream& operator<<(std::ostream& os, List<T>& l) {
         os << "List: ";
-        
+
         Iterator<T> i(l);
         if (!i.check()) {
             os << "empty";

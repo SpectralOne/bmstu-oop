@@ -47,7 +47,6 @@ TEST(ListMethodsSuite, PopFront) {
   ASSERT_EQ(l, ld);
 }
 
-
 TEST(ListMethodsSuite, PopBackThrow) {
   flexlist::List<int> l;
   ASSERT_THROW(l.popBack(), flexlist::EmptyList);

@@ -28,11 +28,12 @@ class List : public BaseList {
     List();
     explicit List(const List<T>& l);
     List(List<T>&& l) noexcept;
-    List(T data, size_t n = 1);
-    
+    explicit List(T data, size_t n = 1);
+
     List(T* array, const size_t size);
-    explicit List(std::istream& is); 
+    explicit List(std::istream& is);
     List(const std::initializer_list<T>& il);
+
     ~List() override;
 
     List<T>& operator=(const List<T>& l) = default;
@@ -54,18 +55,18 @@ class List : public BaseList {
 
     T popBack();
     T popFront();
-    
+
     void remove(Iterator<T>& prev);
     void insert(Iterator<T>& prev, const T& data);
 
     bool operator==(const List<T>& l) const;
     bool operator!=(const List<T>& l) const;
-    
+
     Iterator<T> begin() noexcept;
     Iterator<const T> begin() const noexcept;
     Iterator<T> end() noexcept;
     Iterator<const T> end() const noexcept;
-   
+
     friend class Iterator<T>;
 
  protected:

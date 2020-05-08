@@ -80,4 +80,4 @@ class ConstructorBadArguments : public ListException {
                             const std::string& info = "Bad arguments received")
     : ListException(filename, classname, line, time, info) { }
 };
-}  // flexlist namespace
+}  // namespace flexlist

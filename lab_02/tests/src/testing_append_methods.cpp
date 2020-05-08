@@ -20,7 +20,7 @@ TEST(ListMethodsSuite, AppendList) {
 TEST(ListMethodsSuite, InsertFrontData) {
   flexlist::List<int> l{1, 3};
   ListData<int> ld{0, 4, 1, 3};
-  
+
   ASSERT_NO_THROW(l.pushFront(4));
   ASSERT_NO_THROW(l.pushFront(0));
 

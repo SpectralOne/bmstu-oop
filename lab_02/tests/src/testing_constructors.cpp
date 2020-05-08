@@ -45,7 +45,7 @@ TEST(ListBaseSuite, CreationFromInitializerList) {
 
   flexlist::List<int> list{1, 2, 3};
   ListData<int> list_data{1, 2, 3};
-  
+
   ASSERT_EQ(list.size(), list_data.size());
   ASSERT_EQ(list, list_data);
 }
@@ -69,7 +69,7 @@ TEST(ListBaseSuite, CopyAssign) {
   ASSERT_EQ(l1, l2);
 
   flexlist::List<int>l3;
-  ASSERT_NO_THROW(l3 = l1); 
+  ASSERT_NO_THROW(l3 = l1);
   ASSERT_EQ(l1, l3);
 }
 

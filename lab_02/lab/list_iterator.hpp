@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iterator>
 #include <ctime>
+#include <utility>
 
 #include "exceptions.h"
 #include "list.hpp"
@@ -53,7 +54,7 @@ class Iterator : public std::iterator<std::forward_iterator_tag, T> {
 
     pointer<T> operator->();
     const_pointer<T> operator->() const;
-    
+
     Iterator<T>& operator++();
     const Iterator<T> operator++(int);
     Iterator<T>& operator+=(difference_type<T> n);
@@ -63,6 +64,7 @@ class Iterator : public std::iterator<std::forward_iterator_tag, T> {
     template <typename U> friend bool operator==(const Iterator<U>& a, const Iterator<U>& b);
     template <typename U> friend void swap(Iterator<U>& a, Iterator<U>& b);
     template <typename U> friend bool operator<(const Iterator<U>& a, const Iterator<U>& b);
+
  private:
     Weak<ListNode<T>> node;
 };

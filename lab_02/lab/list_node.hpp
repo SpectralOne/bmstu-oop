@@ -16,7 +16,7 @@ template <typename T>
 class ListNode {
  public:
     ListNode();
-    ListNode(T data);
+    explicit ListNode(T data);
     explicit ListNode(Shared<ListNode<T>> node);
     ~ListNode();
 

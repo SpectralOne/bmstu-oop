@@ -2,7 +2,7 @@
 #define BASE_LIST
 
 class BaseList {
-public:
+ public:
     virtual ~BaseList() = default;
     virtual void clear() = 0;
     virtual bool isEmpty() const = 0;

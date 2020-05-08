@@ -52,48 +52,48 @@ namespace flexlist {
     }
 
     template <typename T>
-    const_reference<T> Iterator<T>::operator*() const { 
+    const_reference<T> Iterator<T>::operator*() const {
         if (!this->check()) {
             time_t t_time = time(NULL);
             throw ListOutOfBounds(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
-        return node.lock()->data; 
-    }
-    
-    template <typename T>
-    pointer<T> Iterator<T>::operator->() { 
-        if (!this->check()) {
-            time_t t_time = time(NULL);
-            throw ListOutOfBounds(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
-        }
-        return &(node.lock()->data); 
+        return node.lock()->data;
     }
 
     template <typename T>
-    const_pointer<T> Iterator<T>::operator->() const { 
+    pointer<T> Iterator<T>::operator->() {
         if (!this->check()) {
             time_t t_time = time(NULL);
             throw ListOutOfBounds(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
-        return &(node.lock()->data); 
+        return &(node.lock()->data);
     }
 
     template <typename T>
-    Iterator<T>& Iterator<T>::operator++() { 
+    const_pointer<T> Iterator<T>::operator->() const {
         if (!this->check()) {
             time_t t_time = time(NULL);
             throw ListOutOfBounds(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
         }
-        this->next(); return *this; 
+        return &(node.lock()->data);
     }
 
     template <typename T>
-    const Iterator<T> Iterator<T>::operator++(int) { 
-        auto old = *this; 
-        ++(*this); 
-        return old; 
+    Iterator<T>& Iterator<T>::operator++() {
+        if (!this->check()) {
+            time_t t_time = time(NULL);
+            throw ListOutOfBounds(__FILE__, typeid(*this).name(), __LINE__, ctime(&t_time));
+        }
+        this->next(); return *this;
     }
-    
+
+    template <typename T>
+    const Iterator<T> Iterator<T>::operator++(int) {
+        auto old = *this;
+        ++(*this);
+        return old;
+    }
+
     template <typename T>
     Iterator<T>& Iterator<T>::operator+=(difference_type<T> n) {
         while (n--) {
@@ -117,38 +117,38 @@ namespace flexlist {
     }
 
     template <typename T>
-    void swap(Iterator<T>& a, Iterator<T>& b) { 
-        std::swap(a.node, b.node); 
+    void swap(Iterator<T>& a, Iterator<T>& b) {
+        std::swap(a.node, b.node);
     }
 
     template <typename T>
-    bool operator==(const Iterator<T>& a, const Iterator<T>& b) { 
+    bool operator==(const Iterator<T>& a, const Iterator<T>& b) {
         return a.node.lock().get() != b.node.lock().get();
     }
 
     template <typename T>
-    bool operator!=(const Iterator<T>& a, const Iterator<T>& b) { 
-        return !(a == b); 
+    bool operator!=(const Iterator<T>& a, const Iterator<T>& b) {
+        return !(a == b);
     }
 
     template <typename T>
-    bool operator<(const Iterator<T>& a, const Iterator<T>& b) { 
+    bool operator<(const Iterator<T>& a, const Iterator<T>& b) {
         return a.node.lock().get() < b.node.lock().get();
     }
 
     template <typename T>
-    bool operator>(const Iterator<T>& a, const Iterator<T>& b) { 
-        return b < a; 
+    bool operator>(const Iterator<T>& a, const Iterator<T>& b) {
+        return b < a;
     }
 
     template <typename T>
-    bool operator<=(const Iterator<T>& a, const Iterator<T>& b) { 
-        return !(b > a); 
+    bool operator<=(const Iterator<T>& a, const Iterator<T>& b) {
+        return !(b > a);
     }
 
     template <typename T>
-    bool operator>=(const Iterator<T>& a, const Iterator<T>& b) { 
-        return !(a < b); 
+    bool operator>=(const Iterator<T>& a, const Iterator<T>& b) {
+        return !(a < b);
     }
 }  // namespace flexlist
 
