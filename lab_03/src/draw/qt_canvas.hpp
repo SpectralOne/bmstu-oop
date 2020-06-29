@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QGraphicsScene>
+
 #include <memory>
 
 #include "base_canvas.hpp"
