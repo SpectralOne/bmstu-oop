@@ -1,14 +1,15 @@
 #include "controlpanel.h"
 
-#include "iostream"
+#include <iostream>
+
 #include "qdebug.h"
 
 ControlPanel::ControlPanel(QObject *parent) : QObject(parent),
-                                                cur_floor(1),
-                                                cur_target(-1),
-                                                is_target(NUM_FLOORS, false),
-                                                current_state(FREE),
-                                                cur_direction(STAY) {}
+                                              cur_floor(1),
+                                              cur_target(-1),
+                                              is_target(NUM_FLOORS, false),
+                                              current_state(FREE),
+                                              cur_direction(STAY) {}
 
 void ControlPanel::set_new_target(int floor) {
     current_state = BUSY;
@@ -37,7 +38,6 @@ void ControlPanel::achieved_floor(int floor) {
         }
 
         if (next_target(floor)) {
-
             cur_direction = (cur_floor > cur_target) ? DOWN : UP;
 
             emit set_target(floor, cur_direction);
