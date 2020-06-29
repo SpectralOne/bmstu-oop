@@ -22,8 +22,8 @@ file(GLOB LOCAL_SOURCE
         "*.cpp"
 )
 
-set(CLIENT_SOURCES
-	${CLIENT_SOURCES}
+set(LAB_SRC
+	${LAB_SRC}
 	${LOCAL_SOURCE}
 	PARENT_SCOPE
 	)
