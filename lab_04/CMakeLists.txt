@@ -28,8 +28,8 @@ include_directories(src)
 
 set(LAB_EXECUTABLE_NAME "lab4")
 
-add_executable(${LAB_EXECUTABLE_NAME} ${CLIENT_SOURCES})
-assign_source_group(${CLIENT_SOURCES})
+add_executable(${LAB_EXECUTABLE_NAME} ${LAB_SRC})
+assign_source_group(${LAB_SRC})
 
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
